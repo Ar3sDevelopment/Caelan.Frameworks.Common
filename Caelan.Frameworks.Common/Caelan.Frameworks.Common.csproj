@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="Classes\BaseBuilder.cs" />
     <Compile Include="Classes\GenericBuilder.cs" />
-    <Compile Include="Enums\LogType.cs" />
     <Compile Include="Extenders\AutoMapperExtender.cs" />
     <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

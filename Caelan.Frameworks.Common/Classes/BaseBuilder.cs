@@ -45,11 +45,10 @@ namespace Caelan.Frameworks.Common.Classes
             if (source == null || source.Equals(default(TSource)))
             {
                 destination = default(TDestination);
+                return;
             }
-            else
-            {
-                Mapper.DynamicMap(source, destination);
-            }
+
+            Mapper.DynamicMap(source, destination);
         }
 
         public virtual void AfterBuild(TSource source, ref TDestination destination)

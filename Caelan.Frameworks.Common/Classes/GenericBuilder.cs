@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using AutoMapper;
 
 namespace Caelan.Frameworks.Common.Classes
 {
@@ -9,6 +12,10 @@ namespace Caelan.Frameworks.Common.Classes
 			where TSource : class, new()
 		{
 			var builder = new BaseBuilder<TSource, TDestination>();
+
+			var customBuilder = Assembly.GetExecutingAssembly().GetReferencedAssemblies().OrderBy(t => t.Name).Select(Assembly.Load).SelectMany(assembly => assembly.GetTypes().Where(t => t.BaseType == builder.GetType())).SingleOrDefault();
+
+			if (customBuilder != null) builder = Activator.CreateInstance(customBuilder) as BaseBuilder<TSource, TDestination>;
 
 			if (Mapper.FindTypeMapFor<TSource, TDestination>() == null) Mapper.AddProfile(builder);
 

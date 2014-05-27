@@ -5,21 +5,21 @@ using AutoMapper;
 
 namespace Caelan.Frameworks.Common.Classes
 {
-    public static class GenericBuilder
-    {
-        public static BaseBuilder<TSource, TDestination> Create<TSource, TDestination>()
-            where TDestination : class, new()
-            where TSource : class, new()
-        {
-            var builder = new BaseBuilder<TSource, TDestination>();
+	public static class GenericBuilder
+	{
+		public static BaseBuilder<TSource, TDestination> Create<TSource, TDestination>()
+			where TDestination : class, new()
+			where TSource : class, new()
+		{
+			var builder = new BaseBuilder<TSource, TDestination>();
 
-            var customBuilder = Assembly.GetCallingAssembly().GetTypes().Where(t => t.BaseType == builder.GetType()).Select(Activator.CreateInstance).SingleOrDefault();
+			var customBuilder = Assembly.GetExecutingAssembly().GetReferencedAssemblies().OrderBy(t => t.Name).Select(Assembly.Load).SelectMany(assembly => assembly.GetTypes().Where(t => t.BaseType == builder.GetType())).SingleOrDefault();
 
-            if (customBuilder != null) return customBuilder as BaseBuilder<TSource, TDestination>;
+			if (customBuilder != null) builder = Activator.CreateInstance(customBuilder) as BaseBuilder<TSource, TDestination>;
 
-            if (Mapper.FindTypeMapFor<TSource, TDestination>() == null) Mapper.AddProfile(builder);
+			if (Mapper.FindTypeMapFor<TSource, TDestination>() == null) Mapper.AddProfile(builder);
 
-            return builder;
-        }
-    }
+			return builder;
+		}
+	}
 }

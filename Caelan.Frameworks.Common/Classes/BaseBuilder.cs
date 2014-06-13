@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Caelan.Frameworks.Common.Extenders;
 
@@ -49,6 +50,16 @@ namespace Caelan.Frameworks.Common.Classes
             }
 
             Mapper.DynamicMap(source, destination);
+        }
+
+        public async Task<TDestination> BuildAsync(TSource source)
+        {
+            return await Task.Run(() => Build(source));
+        }
+
+        public async Task<IEnumerable<TDestination>> BuildListAsync(IEnumerable<TSource> sourceList)
+        {
+            return await Task.Run(() => BuildList(sourceList));
         }
 
         public virtual void AfterBuild(TSource source, ref TDestination destination)

@@ -36,10 +36,11 @@
             sourceList |> Seq.map (fun source -> this.Build(unbox source))
 
         member this.Build(source : 'TSource, destination : 'TDestination byref) =
-            if box source = null || source.Equals(Unchecked.defaultof<'TSource>) then
-                destination <- Unchecked.defaultof<'TDestination>
-            else
-                destination <- Mapper.DynamicMap<'TSource, 'TDestination>(source)
+            destination <-
+                match box source = null || source.Equals(Unchecked.defaultof<'TSource>) with
+                | true -> Unchecked.defaultof<'TDestination>
+                | _ -> Mapper.DynamicMap<'TSource, 'TDestination>(source)
+
             ()
 
         override this.Configure() =

@@ -61,7 +61,7 @@
             let builderType = typedefof<'TBuilder>
             let builder =
                 match builderType.IsGenericType with
-                | true -> Activator.CreateInstance(builderType, typedefof<'TSource>, typedefof<'TDestination>) :?> 'TBuilder
+                | true -> Activator.CreateInstance(builderType.MakeGenericType(typedefof<'TSource>, typedefof<'TDestination>)) :?> 'TBuilder
                 | _ -> Activator.CreateInstance<'TBuilder>()
 
             let mutable assembly = Assembly.GetAssembly(typedefof<'TDestination>)

@@ -65,7 +65,10 @@
                 | _ -> Activator.CreateInstance<'TBuilder>()
 
             let mutable assembly = Assembly.GetAssembly(typedefof<'TDestination>)
-            let mutable customBuilder = assembly.GetTypes() |> Array.find (fun t -> t.BaseType = builder.GetType())
+            let mutable customBuilder =
+                match assembly.GetTypes() |> Array.tryFind (fun t -> t.BaseType = builder.GetType()) with
+                | None -> null
+                | Some(value) -> value
 
             if customBuilder = null then
                 let referAssemblies = assembly.GetReferencedAssemblies() |> Array.sortBy (fun t -> t.Name)
@@ -77,7 +80,10 @@
                     | null -> Assembly.GetCallingAssembly()
                     | _ -> Assembly.GetEntryAssembly()
 
-                customBuilder <- assembly.GetTypes() |> Array.find (fun t -> t.BaseType = builder.GetType())
+                customBuilder <-
+                    match assembly.GetTypes() |> Array.tryFind (fun t -> t.BaseType = builder.GetType()) with
+                    | None -> null
+                    | Some(value) -> value
 
                 if customBuilder = null then
                     let referAssemblies = assembly.GetReferencedAssemblies() |> Array.sortBy (fun t -> t.Name)

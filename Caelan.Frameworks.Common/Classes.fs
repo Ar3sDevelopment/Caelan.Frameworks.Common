@@ -27,10 +27,8 @@
         
                 if (box dest = null) then
                     dest <- Activator.CreateInstance<'TDestination>()
-            
-                let destTemp = ref dest
 
-                this.Build(source, destTemp)
+                this.Build(source, ref dest)
 
                 dest
 

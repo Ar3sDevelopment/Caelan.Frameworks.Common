@@ -23,14 +23,14 @@
             match source with
             | null -> Unchecked.defaultof<'TDestination>
             | _ ->
-                let mutable dest = Unchecked.defaultof<'TDestination>
+                let dest = ref Unchecked.defaultof<'TDestination>
         
                 if (box dest = null) then
-                    dest <- Activator.CreateInstance<'TDestination>()
+                    dest := Activator.CreateInstance<'TDestination>()
 
-                this.Build(source, &dest)
+                this.Build(source, dest)
 
-                dest
+                !dest
 
         member this.BuildList(sourceList : seq<'TDestination>) =
             sourceList |> Seq.map (fun source -> this.Build(unbox source))

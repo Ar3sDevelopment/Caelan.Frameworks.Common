@@ -58,7 +58,11 @@
     [<AbstractClass; Sealed>]
     type GenericBuilder() =
         static member CreateGenericBuilder<'TBuilder, 'TSource, 'TDestination when 'TBuilder :> BaseBuilder<'TSource, 'TDestination>>() =
-            let builder = Activator.CreateInstance<'TBuilder>()
+            let builderType = typedefof<'TBuilder>
+            let builder =
+                match builderType.IsGenericType with
+                | true -> Activator.CreateInstance(builderType, typedefof<'TSource>, typedefof<'TDestination>) :?> 'TBuilder
+                | _ -> Activator.CreateInstance<'TBuilder>()
 
             let mutable assembly = Assembly.GetAssembly(typedefof<'TDestination>)
             let mutable customBuilder = assembly.GetTypes() |> Array.find (fun t -> t.BaseType = builder.GetType())

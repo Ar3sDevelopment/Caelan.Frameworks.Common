@@ -8,7 +8,6 @@
     open AutoMapper.Internal
     open Caelan.Frameworks.Common.Extenders
 
-    [<AbstractClass>]
     type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestination : equality and 'TSource : null and 'TDestination : null>() =
         inherit Profile()
 

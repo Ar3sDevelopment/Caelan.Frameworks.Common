@@ -19,6 +19,17 @@
         default this.AfterBuild(source : 'TSource, destination : 'TDestination ref) =
             ()
 
+        override this.Configure() =
+            base.Configure()
+
+            let mappingExpression = Mapper.CreateMap<'TSource, 'TDestination>()
+            mappingExpression.AfterMap(fun source destination ->
+                let refDest = ref destination
+                this.AfterBuild(source,refDest) |> ignore
+            ) |> ignore
+
+            this.AddMappingConfigurations(mappingExpression)
+
         member this.Build(source : 'TSource) =
             match source with
             | null -> Unchecked.defaultof<'TDestination>
@@ -32,8 +43,7 @@
 
                 !dest
 
-        member this.BuildList(sourceList : seq<'TDestination>) =
-            sourceList |> Seq.map (fun source -> this.Build(unbox source))
+        member this.BuildList(sourceList : seq<'TDestination>) = sourceList |> Seq.map (fun source -> this.Build(unbox source))
 
         member this.Build(source : 'TSource, destination : 'TDestination byref) =
             destination <-
@@ -43,16 +53,9 @@
 
             ()
 
-        override this.Configure() =
-            base.Configure()
-
-            let mappingExpression = Mapper.CreateMap<'TSource, 'TDestination>()
-            mappingExpression.AfterMap(fun source destination ->
-                let refDest = ref destination
-                this.AfterBuild(source,refDest) |> ignore
-            ) |> ignore
-
-            this.AddMappingConfigurations(mappingExpression)
+        member this.BuildAsync(source) = async { return this.Build(source) } |> Async.StartAsTask
+        member this.BuildAsync(source, destination) = async { return this.Build(source, ref destination) } |> Async.StartAsTask
+        member this.BuildListAsync(sourceList) = async { return this.BuildList(sourceList) } |> Async.StartAsTask
 
     [<AbstractClass; Sealed>]
     type GenericBuilder() =

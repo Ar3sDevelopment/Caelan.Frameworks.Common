@@ -43,7 +43,7 @@
 
                 !dest
 
-        member this.BuildList(sourceList : seq<'TDestination>) = sourceList |> Seq.map (fun source -> this.Build(unbox source))
+        member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
 
         member this.Build(source : 'TSource, destination : 'TDestination byref) =
             destination <-

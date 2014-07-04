@@ -36,8 +36,8 @@ type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestinat
     
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
     
-    member this.Build(source : 'TSource, destination : 'TDestination byref) = 
-        destination <- match box source = null || source.Equals(Unchecked.defaultof<'TSource>) with
+    member this.Build(source : 'TSource, destination : 'TDestination ref) = 
+        destination := match box source = null || source.Equals(Unchecked.defaultof<'TSource>) with
                        | true -> Unchecked.defaultof<'TDestination>
                        | _ -> Mapper.DynamicMap<'TSource, 'TDestination>(source)
         ()

@@ -30,14 +30,14 @@ type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestinat
         | null -> Unchecked.defaultof<'TDestination>
         | _ -> 
             let dest = ref Unchecked.defaultof<'TDestination>
-            if (box dest = null) then dest := Activator.CreateInstance<'TDestination>()
+            if (!dest = null) then dest := Activator.CreateInstance<'TDestination>()
             this.Build(source, dest)
             !dest
     
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
     
     member this.Build(source : 'TSource, destination : 'TDestination ref) = 
-        destination := match box source = null || source.Equals(Unchecked.defaultof<'TSource>) with
+        destination := match source = null || source.Equals(Unchecked.defaultof<'TSource>) with
                        | true -> Unchecked.defaultof<'TDestination>
                        | _ -> Mapper.DynamicMap<'TSource, 'TDestination>(source)
         ()

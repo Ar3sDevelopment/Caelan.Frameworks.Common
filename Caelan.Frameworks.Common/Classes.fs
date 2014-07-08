@@ -94,3 +94,17 @@ type GenericBuilder() =
     
     static member Create<'TSource, 'TDestination when 'TSource : equality and 'TDestination : equality and 'TSource : null and 'TDestination : null>() = 
         GenericBuilder.CreateGenericBuilder<BaseBuilder<'TSource, 'TDestination>, 'TSource, 'TDestination>()
+
+[<Sealed>]
+[<AbstractClass>]
+type BuilderConfiguration() = 
+    static member Configure() = 
+        let profiles = 
+            Assembly.GetExecutingAssembly().GetTypes()
+            |> Seq.filter 
+                   (fun t -> 
+                   (typeof<Profile>).IsAssignableFrom(t) = true && t.GetConstructor(Type.EmptyTypes) <> null 
+                   && t.IsGenericType = false)
+            |> Seq.map (fun t -> Activator.CreateInstance(t) :?> Profile)
+            |> List.ofSeq
+        Mapper.Initialize(fun a -> profiles |> List.iter (fun t -> a.AddProfile(t)))

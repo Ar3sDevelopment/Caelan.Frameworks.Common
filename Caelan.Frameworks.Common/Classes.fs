@@ -100,7 +100,10 @@ type GenericBuilder() =
 type BuilderConfiguration() = 
     static member Configure() = 
         let profiles = 
-            Assembly.GetExecutingAssembly().GetTypes()
+            Assembly.GetCallingAssembly().GetTypes()
+            |> (Seq.append (Assembly.GetCallingAssembly().GetReferencedAssemblies()
+                |> Seq.map (fun t -> Assembly.Load(t))
+                    |> Seq.collect (fun t -> t.GetTypes())))
             |> Seq.filter 
                    (fun t -> 
                    (typeof<Profile>).IsAssignableFrom(t) = true && t.GetConstructor(Type.EmptyTypes) <> null 

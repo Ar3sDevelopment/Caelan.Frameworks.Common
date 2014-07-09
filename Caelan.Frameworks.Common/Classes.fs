@@ -102,8 +102,8 @@ type BuilderConfiguration() =
         let profiles = 
             Assembly.GetCallingAssembly().GetTypes()
             |> (Seq.append (Assembly.GetCallingAssembly().GetReferencedAssemblies()
-                |> Seq.map (fun t -> Assembly.Load(t))
-                    |> Seq.collect (fun t -> t.GetTypes())))
+                            |> Seq.map (fun t -> Assembly.Load(t))
+                            |> Seq.collect (fun t -> t.GetTypes())))
             |> Seq.filter 
                    (fun t -> 
                    (typeof<Profile>).IsAssignableFrom(t) = true && t.GetConstructor(Type.EmptyTypes) <> null 

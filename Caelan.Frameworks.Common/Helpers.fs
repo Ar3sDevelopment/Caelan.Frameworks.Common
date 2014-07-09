@@ -18,4 +18,4 @@ type PasswordHelper() =
         |> String.concat ""
     
     abstract EncryptPassword : password:string -> string
-    override this.EncryptPassword(password) = this.Sha512Encrypt(this.GetSalt() + password)
+    override this.EncryptPassword(password) = this.Sha512Encrypt(this.GetSalt() + this.Sha512Encrypt(password))

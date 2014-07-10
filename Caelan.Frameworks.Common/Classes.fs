@@ -55,7 +55,7 @@ type GenericBuilder() =
         let builderType = typedefof<'TBuilder>
         
         let builder = 
-            (match builderType.IsGenericType with
+            (match builderType.IsGenericTypeDefinition with
              | true -> 
                  Activator.CreateInstance(builderType.MakeGenericType(typedefof<'TSource>, typedefof<'TDestination>))
              | _ -> Activator.CreateInstance(builderType)) :?> 'TBuilder
@@ -107,7 +107,7 @@ type BuilderConfiguration() =
             |> Seq.filter 
                    (fun t -> 
                    (typeof<Profile>).IsAssignableFrom(t) = true && t.GetConstructor(Type.EmptyTypes) <> null 
-                   && t.IsGenericType = false)
+                   && t.IsGenericTypeDefinition = false)
             |> Seq.map (fun t -> Activator.CreateInstance(t) :?> Profile)
             |> List.ofSeq
         Mapper.Initialize(fun a -> profiles |> List.iter (fun t -> a.AddProfile(t)))

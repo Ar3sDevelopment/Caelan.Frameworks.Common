@@ -13,15 +13,15 @@ type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestinat
     abstract AddMappingConfigurations : IMappingExpression<'TSource, 'TDestination> -> unit
     override __.AddMappingConfigurations(mappingExpression) = 
         AutoMapperExtender.IgnoreAllNonExisting(mappingExpression) |> ignore
-    abstract AfterBuild : 'TSource * 'TDestination byref -> unit
-    override __.AfterBuild(_, _) = ()
+    abstract AfterBuild : 'TSource * 'TDestination -> 'TDestination
+    override __.AfterBuild(_, destination) = destination
     
     override this.Configure() = 
         base.Configure()
         let mappingExpression = Mapper.CreateMap<'TSource, 'TDestination>()
         mappingExpression.AfterMap(fun source destination -> 
             let refDest = ref destination
-            this.AfterBuild(source, refDest) |> ignore)
+            refDest := this.AfterBuild(source, destination))
         |> ignore
         this.AddMappingConfigurations(mappingExpression)
     

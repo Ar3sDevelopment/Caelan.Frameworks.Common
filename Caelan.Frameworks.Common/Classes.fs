@@ -13,8 +13,8 @@ type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestinat
     abstract AddMappingConfigurations : IMappingExpression<'TSource, 'TDestination> -> unit
     override this.AddMappingConfigurations(mappingExpression : IMappingExpression<'TSource, 'TDestination>) = 
         AutoMapperExtender.IgnoreAllNonExisting(mappingExpression) |> ignore
-    abstract AfterBuild : 'TSource * 'TDestination ref -> unit
-    override this.AfterBuild(source : 'TSource, destination : 'TDestination ref) = ()
+    abstract AfterBuild : 'TSource * 'TDestination byref -> unit
+    override this.AfterBuild(source : 'TSource, destination : 'TDestination byref) = ()
     
     override this.Configure() = 
         base.Configure()
@@ -29,22 +29,21 @@ type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestinat
         match source with
         | null -> Unchecked.defaultof<'TDestination>
         | _ -> 
-            let dest = ref Unchecked.defaultof<'TDestination>
-            if (!dest = null) then dest := Activator.CreateInstance<'TDestination>()
-            this.Build(source, dest)
-            !dest
+            let mutable dest = Unchecked.defaultof<'TDestination>
+            if (dest = null) then dest <- Activator.CreateInstance<'TDestination>()
+            this.Build(source, &dest)
+            dest
     
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
     
-    member this.Build(source : 'TSource, destination : 'TDestination ref) = 
-        destination := match source = null || source.Equals(Unchecked.defaultof<'TSource>) with
+    member this.Build(source : 'TSource, destination : 'TDestination byref) = 
+        destination <- match source = null || source.Equals(Unchecked.defaultof<'TSource>) with
                        | true -> Unchecked.defaultof<'TDestination>
                        | _ -> Mapper.DynamicMap<'TSource, 'TDestination>(source)
         ()
     
     member this.BuildAsync(source) = async { return this.Build(source) } |> Async.StartAsTask
-    member this.BuildAsync(source, destination) = 
-        async { return this.Build(source, ref destination) } |> Async.StartAsTask
+    member this.BuildAsync(source, destination) = async { return this.Build(source, destination) } |> Async.StartAsTask
     member this.BuildListAsync(sourceList) = async { return this.BuildList(sourceList) } |> Async.StartAsTask
 
 [<AbstractClass>]

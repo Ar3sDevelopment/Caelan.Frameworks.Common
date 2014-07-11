@@ -21,7 +21,7 @@ type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestinat
         let mappingExpression = Mapper.CreateMap<'TSource, 'TDestination>()
         mappingExpression.AfterMap(fun source destination -> 
             let refDest = ref destination
-            refDest := this.AfterBuild(source, destination))
+            refDest := this.AfterBuild(source, !refDest))
         |> ignore
         this.AddMappingConfigurations(mappingExpression)
     

@@ -11,39 +11,40 @@ open Caelan.Frameworks.Common.Extenders
 type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestination : equality and 'TSource : null and 'TDestination : null>() = 
     inherit Profile()
     abstract AddMappingConfigurations : IMappingExpression<'TSource, 'TDestination> -> unit
-    override __.AddMappingConfigurations(mappingExpression) = 
+    override this.AddMappingConfigurations(mappingExpression : IMappingExpression<'TSource, 'TDestination>) = 
         AutoMapperExtender.IgnoreAllNonExisting(mappingExpression) |> ignore
-    abstract AfterBuild : 'TSource * 'TDestination -> 'TDestination
-    override __.AfterBuild(_, destination) = destination
+    abstract AfterBuild : 'TSource * 'TDestination ref -> unit
+    override this.AfterBuild(source : 'TSource, destination : 'TDestination ref) = ()
     
     override this.Configure() = 
         base.Configure()
         let mappingExpression = Mapper.CreateMap<'TSource, 'TDestination>()
         mappingExpression.AfterMap(fun source destination -> 
             let refDest = ref destination
-            refDest := this.AfterBuild(source, !refDest))
+            this.AfterBuild(source, refDest) |> ignore)
         |> ignore
         this.AddMappingConfigurations(mappingExpression)
     
-    member this.Build(source) = 
+    member this.Build(source : 'TSource) = 
         match source with
         | null -> Unchecked.defaultof<'TDestination>
         | _ -> 
-            let mutable dest = Unchecked.defaultof<'TDestination>
-            if (dest = null) then dest <- Activator.CreateInstance<'TDestination>()
-            this.Build(source, &dest)
-            dest
+            let dest = ref Unchecked.defaultof<'TDestination>
+            if (!dest = null) then dest := Activator.CreateInstance<'TDestination>()
+            this.Build(source, dest)
+            !dest
     
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
     
-    member __.Build(source, destination) = 
-        destination <- match source = null || source.Equals(Unchecked.defaultof<'TSource>) with
+    member this.Build(source : 'TSource, destination : 'TDestination ref) = 
+        destination := match source = null || source.Equals(Unchecked.defaultof<'TSource>) with
                        | true -> Unchecked.defaultof<'TDestination>
                        | _ -> Mapper.DynamicMap<'TSource, 'TDestination>(source)
         ()
     
     member this.BuildAsync(source) = async { return this.Build(source) } |> Async.StartAsTask
-    member this.BuildAsync(source, destination) = async { return this.Build(source, destination) } |> Async.StartAsTask
+    member this.BuildAsync(source, destination) = 
+        async { return this.Build(source, ref destination) } |> Async.StartAsTask
     member this.BuildListAsync(sourceList) = async { return this.BuildList(sourceList) } |> Async.StartAsTask
 
 [<AbstractClass>]

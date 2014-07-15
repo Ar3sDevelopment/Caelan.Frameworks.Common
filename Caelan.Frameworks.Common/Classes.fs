@@ -11,10 +11,10 @@ open Caelan.Frameworks.Common.Extenders
 type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestination : equality and 'TSource : null and 'TDestination : null>() = 
     inherit Profile()
     abstract AddMappingConfigurations : IMappingExpression<'TSource, 'TDestination> -> unit
-    override this.AddMappingConfigurations(mappingExpression : IMappingExpression<'TSource, 'TDestination>) = 
+    override __.AddMappingConfigurations(mappingExpression : IMappingExpression<'TSource, 'TDestination>) = 
         AutoMapperExtender.IgnoreAllNonExisting(mappingExpression) |> ignore
     abstract AfterBuild : 'TSource * 'TDestination ref -> unit
-    override this.AfterBuild(source : 'TSource, destination : 'TDestination ref) = ()
+    override __.AfterBuild(_ : 'TSource, _ : 'TDestination ref) = ()
     
     override this.Configure() = 
         base.Configure()
@@ -36,7 +36,7 @@ type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestinat
     
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
     
-    member this.Build(source : 'TSource, destination : 'TDestination ref) = 
+    member __.Build(source : 'TSource, destination : 'TDestination ref) = 
         destination := match source = null || source.Equals(Unchecked.defaultof<'TSource>) with
                        | true -> Unchecked.defaultof<'TDestination>
                        | _ -> Mapper.DynamicMap<'TSource, 'TDestination>(source)

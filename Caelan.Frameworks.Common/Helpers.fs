@@ -11,7 +11,7 @@ type PasswordHelper() =
     override this.GetDefaultPasswordEncrypted() = this.EncryptPassword(this.GetDefaultPassword())
     abstract Sha512Encrypt : password:string -> string
     
-    override this.Sha512Encrypt(password) = 
+    override __.Sha512Encrypt(password) = 
         use provider = new SHA512CryptoServiceProvider()
         provider.ComputeHash(Encoding.Default.GetBytes(password))
         |> Array.map (fun t -> t.ToString("x2").ToLower())

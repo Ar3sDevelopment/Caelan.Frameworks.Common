@@ -5,9 +5,10 @@ open AutoMapper.Internal
 open System.Reflection
 open System.Runtime.CompilerServices
 
-module AutoMapperExtender = 
+[<Extension>]
+type public AutoMapperExtender = 
     [<Extension>]
-    let IgnoreAllNonExisting(expression : IMappingExpression<'TSource, 'TDestination>) = 
+    static member IgnoreAllNonExisting(expression : IMappingExpression<'TSource, 'TDestination>) = 
         match Mapper.GetAllTypeMaps() 
               |> Seq.tryFind 
                      (fun (item : TypeMap) -> 
@@ -19,7 +20,7 @@ module AutoMapperExtender =
         | None -> ()
     
     [<Extension>]
-    let IgnoreAllNonPrimitive(expression : IMappingExpression<'TSource, 'TDestination>) = 
+    static member IgnoreAllNonPrimitive(expression : IMappingExpression<'TSource, 'TDestination>) = 
         (typedefof<'TDestination>).GetProperties(BindingFlags.Public ||| BindingFlags.Instance)
         |> Seq.filter 
                (fun item -> 
@@ -27,7 +28,21 @@ module AutoMapperExtender =
         |> Seq.iter (fun prop -> expression.ForMember(prop.Name, fun opt -> opt.Ignore()) |> ignore)
     
     [<Extension>]
-    let IgnoreAllLists(expression : IMappingExpression<'TSource, 'TDestination>) = 
+    static member IgnoreAllLists(expression : IMappingExpression<'TSource, 'TDestination>) = 
         (typedefof<'TDestination>).GetProperties(BindingFlags.Public ||| BindingFlags.Instance)
         |> Seq.filter (fun item -> item.PropertyType.IsEnumerableType() && item.PropertyType <> typedefof<string>)
         |> Seq.iter (fun prop -> expression.ForMember(prop.Name, fun opt -> opt.Ignore()) |> ignore)
+
+[<Extension>]
+type public FunctionConverter =
+    [<Extension>]
+    static member ToFSharpFunc<'TOut>(expr : System.Func<'TOut>) = fun _ -> expr.Invoke()
+
+    [<Extension>]
+    static member ToFSharpFunc<'TIn, 'TOut>(expr : System.Func<'TIn, 'TOut>) = fun p -> expr.Invoke(p)
+
+    [<Extension>]
+    static member ToFSharpFunc<'TIn1, 'TIn2, 'TOut>(expr : System.Func<'TIn1, 'TIn2, 'TOut>) = fun p1 p2 -> expr.Invoke(p1, p2)
+
+    [<Extension>]
+    static member ToFSharpFunc<'TIn1, 'TIn2, 'TIn3, 'TOut>(expr : System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>) = fun p1 p2 p3 -> expr.Invoke(p1, p2, p3)

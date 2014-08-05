@@ -21,7 +21,7 @@ type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestinat
         let mappingExpression = Mapper.CreateMap<'TSource, 'TDestination>()
         mappingExpression.AfterMap(fun source destination -> 
             let refDest = ref destination
-            this.AfterBuild(source, refDest) |> ignore)
+            this.AfterBuild(source, refDest))
         |> ignore
         this.AddMappingConfigurations(mappingExpression)
     
@@ -51,45 +51,40 @@ type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestinat
 [<Sealed>]
 type GenericBuilder() = 
     
+    static member private FindCustomBuilderType (builderType : Type) (assembly : Assembly) = 
+        match assembly.GetTypes() |> Array.tryFind (fun t -> t.BaseType = builderType) with
+        | Some(value) -> value
+        | None -> 
+            query { 
+                for refAssembly in (assembly.GetReferencedAssemblies()
+                                    |> Array.sortBy (fun t -> t.Name)
+                                    |> Array.map (fun t -> Assembly.Load(t))
+                                    |> Array.collect 
+                                           (fun t -> t.GetTypes() |> Array.filter (fun x -> x.BaseType = builderType))) do
+                    select refAssembly
+                    exactlyOneOrDefault
+            }
+    
     static member CreateGenericBuilder<'TBuilder, 'TSource, 'TDestination when 'TBuilder :> BaseBuilder<'TSource, 'TDestination>>() = 
         let builderType = typedefof<'TBuilder>
         
         let builder = 
             (match builderType.IsGenericTypeDefinition with
              | true -> 
-                 Activator.CreateInstance(builderType.MakeGenericType(typedefof<'TSource>, typedefof<'TDestination>))
+                 builderType.MakeGenericType(typedefof<'TSource>, typedefof<'TDestination>) |> Activator.CreateInstance
              | _ -> Activator.CreateInstance(builderType)) :?> 'TBuilder
         
-        let mutable assembly = Assembly.GetAssembly(typedefof<'TDestination>)
+        let assembly = Assembly.GetAssembly(typedefof<'TDestination>)
         
-        let mutable customBuilder = 
-            match assembly.GetTypes() |> Array.tryFind (fun t -> t.BaseType = builder.GetType()) with
-            | None -> null
-            | Some(value) -> value
-        if customBuilder = null then 
-            let referAssemblies = assembly.GetReferencedAssemblies() |> Array.sortBy (fun t -> t.Name)
-            customBuilder <- referAssemblies.Select(fun t -> Assembly.Load(t))
-                                            .SelectMany(fun t -> 
-                                            t.GetTypes().Where(fun x -> x.BaseType = builder.GetType()))
-                                            .SingleOrDefault()
-        if customBuilder = null then 
-            assembly <- match Assembly.GetEntryAssembly() with
-                        | null -> Assembly.GetCallingAssembly()
-                        | _ -> Assembly.GetEntryAssembly()
-            customBuilder <- match assembly.GetTypes() |> Array.tryFind (fun t -> t.BaseType = builder.GetType()) with
-                             | None -> null
-                             | Some(value) -> value
-            if customBuilder = null then 
-                let referAssemblies = assembly.GetReferencedAssemblies() |> Array.sortBy (fun t -> t.Name)
-                customBuilder <- referAssemblies.Select(fun t -> Assembly.Load(t))
-                                                .SelectMany(fun t -> 
-                                                t.GetTypes().Where(fun x -> x.BaseType = builder.GetType()))
-                                                .SingleOrDefault()
-                if customBuilder = null then 
-                    if Mapper.FindTypeMapFor<'TSource, 'TDestination>() = null then Mapper.AddProfile(builder)
-                    builder
-                else Activator.CreateInstance(customBuilder) :?> 'TBuilder
-            else Activator.CreateInstance(customBuilder) :?> 'TBuilder
+        let customBuilder = 
+            match assembly |> GenericBuilder.FindCustomBuilderType(builder.GetType()) with
+            | null -> 
+                (match Assembly.GetEntryAssembly() with
+                 | null -> Assembly.GetCallingAssembly()
+                 | _ -> Assembly.GetEntryAssembly())
+                |> GenericBuilder.FindCustomBuilderType(builder.GetType())
+            | customBuilderType -> customBuilderType
+        if customBuilder = null then builder
         else Activator.CreateInstance(customBuilder) :?> 'TBuilder
     
     static member Create<'TSource, 'TDestination when 'TSource : equality and 'TDestination : equality and 'TSource : null and 'TDestination : null>() = 
@@ -109,5 +104,5 @@ type BuilderConfiguration() =
                    (typeof<Profile>).IsAssignableFrom(t) = true && t.GetConstructor(Type.EmptyTypes) <> null 
                    && t.IsGenericTypeDefinition = false)
             |> Seq.map (fun t -> Activator.CreateInstance(t) :?> Profile)
-            |> List.ofSeq
-        Mapper.Initialize(fun a -> profiles |> List.iter (fun t -> a.AddProfile(t)))
+            |> Array.ofSeq
+        Mapper.Initialize(fun a -> profiles |> Array.iter (fun t -> a.AddProfile(t)))

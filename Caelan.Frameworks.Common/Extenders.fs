@@ -7,6 +7,7 @@ open System.Runtime.CompilerServices
 
 [<Extension>]
 type public AutoMapperExtender = 
+    
     [<Extension>]
     static member IgnoreAllNonExisting(expression : IMappingExpression<'TSource, 'TDestination>) = 
         match Mapper.GetAllTypeMaps() 
@@ -34,15 +35,34 @@ type public AutoMapperExtender =
         |> Seq.iter (fun prop -> expression.ForMember(prop.Name, fun opt -> opt.Ignore()) |> ignore)
 
 [<Extension>]
-type public FunctionConverter =
+type public FunctionConverter = 
+    
     [<Extension>]
-    static member ToFSharpFunc<'TOut>(expr : System.Func<'TOut>) = fun _ -> expr.Invoke()
-
+    static member ToFSharpFunc(expr : System.Func<'TOut>) = fun _ -> expr.Invoke()
+    
     [<Extension>]
-    static member ToFSharpFunc<'TIn, 'TOut>(expr : System.Func<'TIn, 'TOut>) = fun p -> expr.Invoke(p)
-
+    static member ToFSharpFunc(expr : System.Func<'TIn, 'TOut>) = fun p -> expr.Invoke(p)
+    
     [<Extension>]
-    static member ToFSharpFunc<'TIn1, 'TIn2, 'TOut>(expr : System.Func<'TIn1, 'TIn2, 'TOut>) = fun p1 p2 -> expr.Invoke(p1, p2)
-
+    static member ToFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TOut>) = fun p1 p2 -> expr.Invoke(p1, p2)
+    
     [<Extension>]
-    static member ToFSharpFunc<'TIn1, 'TIn2, 'TIn3, 'TOut>(expr : System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>) = fun p1 p2 p3 -> expr.Invoke(p1, p2, p3)
+    static member ToFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>) = fun p1 p2 p3 -> expr.Invoke(p1, p2, p3)
+    
+    [<Extension>]
+    static member ToSystemFunc(expr : unit -> 'TOut) = System.Func<'TOut>(expr)
+    
+    [<Extension>]
+    static member ToSystemFunc(expr : 'TIn -> 'TOut) = System.Func<'TIn, 'TOut>(expr)
+    
+    [<Extension>]
+    static member ToSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TOut) = System.Func<'TIn1, 'TIn2, 'TOut>(expr)
+    
+    [<Extension>]
+    static member ToSystemFunc(expr : 'TIn1 * 'TIn2 -> 'TOut) = System.Func<'TIn1 * 'TIn2, 'TOut>(expr)
+    
+    [<Extension>]
+    static member ToSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TIn3 -> 'TOut) = System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>(expr)
+    
+    [<Extension>]
+    static member ToSystemFunc(expr : 'TIn1 * 'TIn2 * 'TIn3 -> 'TOut) = System.Func<'TIn1 * 'TIn2 * 'TIn3, 'TOut>(expr)

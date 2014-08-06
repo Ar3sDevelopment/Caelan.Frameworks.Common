@@ -59,10 +59,20 @@ type public FunctionConverter =
     static member ToSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TOut) = System.Func<'TIn1, 'TIn2, 'TOut>(expr)
     
     [<Extension>]
-    static member ToSystemFunc(expr : 'TIn1 * 'TIn2 -> 'TOut) = System.Func<'TIn1 * 'TIn2, 'TOut>(expr)
-    
-    [<Extension>]
     static member ToSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TIn3 -> 'TOut) = System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>(expr)
-    
-    [<Extension>]
-    static member ToSystemFunc(expr : 'TIn1 * 'TIn2 * 'TIn3 -> 'TOut) = System.Func<'TIn1 * 'TIn2 * 'TIn3, 'TOut>(expr)
+
+    static member CreateFSharpFunc(expr : System.Func<'TOut>) = FunctionConverter.ToFSharpFunc expr
+
+    static member CreateFSharpFunc(expr : System.Func<'TIn, 'TOut>) = FunctionConverter.ToFSharpFunc expr
+
+    static member CreateFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TOut>) = FunctionConverter.ToFSharpFunc expr
+
+    static member CreateFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>) = FunctionConverter.ToFSharpFunc expr
+
+    static member CreateSystemFunc(expr : unit -> 'TOut) = System.Func<'TOut> expr
+
+    static member CreateSystemFunc(expr : 'TIn -> 'TOut) = System.Func<'TIn, 'TOut>(expr)
+
+    static member CreateSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TOut) = System.Func<'TIn1, 'TIn2, 'TOut>(expr)
+
+    static member CreateSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TIn3 -> 'TOut) = System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>(expr)

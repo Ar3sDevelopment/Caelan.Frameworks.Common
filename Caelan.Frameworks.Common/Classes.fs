@@ -85,7 +85,9 @@ type GenericBuilder() =
             | customBuilderType -> customBuilderType
         
         match customBuilder with
-        | null -> builder
+        | null ->
+            if Mapper.FindTypeMapFor<'TSource, 'TDestination>() = null then Mapper.AddProfile(builder)
+            builder
         | _ -> Activator.CreateInstance(customBuilder) :?> 'TBuilder
     
     static member Create<'TSource, 'TDestination when 'TSource : equality and 'TDestination : equality and 'TSource : null and 'TDestination : null>() = 

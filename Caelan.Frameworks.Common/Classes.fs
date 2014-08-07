@@ -66,16 +66,16 @@ type GenericBuilder() =
             }
     
     static member CreateGenericBuilder<'TBuilder, 'TSource, 'TDestination when 'TBuilder :> BaseBuilder<'TSource, 'TDestination>>() = 
-        let builderType = typedefof<'TBuilder>
+        let builderType = typeof<'TBuilder>
         
         let builder = 
             ((match builderType.IsGenericTypeDefinition with
-              | true -> builderType.MakeGenericType(typedefof<'TSource>, typedefof<'TDestination>)
+              | true -> builderType.MakeGenericType(typeof<'TSource>, typeof<'TDestination>)
               | _ -> builderType)
              |> Activator.CreateInstance) :?> 'TBuilder
         
         let customBuilder = 
-            match Assembly.GetAssembly(typedefof<'TDestination>) 
+            match Assembly.GetAssembly(typeof<'TDestination>) 
                   |> GenericBuilder.FindCustomBuilderType(builder.GetType()) with
             | null -> 
                 (match Assembly.GetEntryAssembly() with

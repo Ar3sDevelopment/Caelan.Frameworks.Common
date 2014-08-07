@@ -13,8 +13,8 @@ type public AutoMapperExtender =
         match Mapper.GetAllTypeMaps() 
               |> Seq.tryFind 
                      (fun (item : TypeMap) -> 
-                     item.SourceType.Equals(typedefof<'TSource>) 
-                     && item.DestinationType.Equals(typedefof<'TDestination>)) with
+                     item.SourceType.Equals(typeof<'TSource>) 
+                     && item.DestinationType.Equals(typeof<'TDestination>)) with
         | Some(i) -> 
             i.GetUnmappedPropertyNames() 
             |> Seq.iter (fun prop -> expression.ForMember(prop, fun opt -> opt.Ignore()) |> ignore)
@@ -22,16 +22,16 @@ type public AutoMapperExtender =
     
     [<Extension>]
     static member IgnoreAllNonPrimitive(expression : IMappingExpression<'TSource, 'TDestination>) = 
-        (typedefof<'TDestination>).GetProperties(BindingFlags.Public ||| BindingFlags.Instance)
+        (typeof<'TDestination>).GetProperties(BindingFlags.Public ||| BindingFlags.Instance)
         |> Seq.filter 
                (fun item -> 
-               (item.PropertyType.IsPrimitive || item.PropertyType.IsValueType || item.PropertyType = typedefof<string>) = false)
+               (item.PropertyType.IsPrimitive || item.PropertyType.IsValueType || item.PropertyType = typeof<string>) = false)
         |> Seq.iter (fun prop -> expression.ForMember(prop.Name, fun opt -> opt.Ignore()) |> ignore)
     
     [<Extension>]
     static member IgnoreAllLists(expression : IMappingExpression<'TSource, 'TDestination>) = 
-        (typedefof<'TDestination>).GetProperties(BindingFlags.Public ||| BindingFlags.Instance)
-        |> Seq.filter (fun item -> item.PropertyType.IsEnumerableType() && item.PropertyType <> typedefof<string>)
+        (typeof<'TDestination>).GetProperties(BindingFlags.Public ||| BindingFlags.Instance)
+        |> Seq.filter (fun item -> item.PropertyType.IsEnumerableType() && item.PropertyType <> typeof<string>)
         |> Seq.iter (fun prop -> expression.ForMember(prop.Name, fun opt -> opt.Ignore()) |> ignore)
 
 [<Extension>]

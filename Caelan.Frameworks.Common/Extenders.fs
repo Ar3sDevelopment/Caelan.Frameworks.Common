@@ -13,8 +13,7 @@ type public AutoMapperExtender =
         match Mapper.GetAllTypeMaps() 
               |> Seq.tryFind 
                      (fun (item : TypeMap) -> 
-                     item.SourceType.Equals(typeof<'TSource>) 
-                     && item.DestinationType.Equals(typeof<'TDestination>)) with
+                     item.SourceType.Equals(typeof<'TSource>) && item.DestinationType.Equals(typeof<'TDestination>)) with
         | Some(i) -> 
             i.GetUnmappedPropertyNames() 
             |> Seq.iter (fun prop -> expression.ForMember(prop, fun opt -> opt.Ignore()) |> ignore)
@@ -38,16 +37,28 @@ type public AutoMapperExtender =
 type public FunctionConverter = 
     
     [<Extension>]
-    static member ToFSharpFunc(expr : System.Func<'TOut>) = fun _ -> expr.Invoke()
+    static member ToFSharpFunc(expr : System.Func<'TOut>) = 
+        match expr with
+        | null -> None
+        | _ -> Some(fun _ -> expr.Invoke())
     
     [<Extension>]
-    static member ToFSharpFunc(expr : System.Func<'TIn, 'TOut>) = fun p -> expr.Invoke(p)
+    static member ToFSharpFunc(expr : System.Func<'TIn, 'TOut>) = 
+        match expr with
+        | null -> None
+        | _ -> Some(fun p -> expr.Invoke(p))
     
     [<Extension>]
-    static member ToFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TOut>) = fun p1 p2 -> expr.Invoke(p1, p2)
+    static member ToFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TOut>) = 
+        match expr with
+        | null -> None
+        | _ -> Some(fun p1 p2 -> expr.Invoke(p1, p2))
     
     [<Extension>]
-    static member ToFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>) = fun p1 p2 p3 -> expr.Invoke(p1, p2, p3)
+    static member ToFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>) = 
+        match expr with
+        | null -> None
+        | _ -> Some(fun p1 p2 p3 -> expr.Invoke(p1, p2, p3))
     
     [<Extension>]
     static member ToSystemFunc(expr : unit -> 'TOut) = System.Func<'TOut>(expr)
@@ -60,19 +71,13 @@ type public FunctionConverter =
     
     [<Extension>]
     static member ToSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TIn3 -> 'TOut) = System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>(expr)
-
+    
     static member CreateFSharpFunc(expr : System.Func<'TOut>) = FunctionConverter.ToFSharpFunc expr
-
     static member CreateFSharpFunc(expr : System.Func<'TIn, 'TOut>) = FunctionConverter.ToFSharpFunc expr
-
     static member CreateFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TOut>) = FunctionConverter.ToFSharpFunc expr
-
     static member CreateFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>) = FunctionConverter.ToFSharpFunc expr
-
     static member CreateSystemFunc(expr : unit -> 'TOut) = System.Func<'TOut> expr
-
     static member CreateSystemFunc(expr : 'TIn -> 'TOut) = System.Func<'TIn, 'TOut>(expr)
-
     static member CreateSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TOut) = System.Func<'TIn1, 'TIn2, 'TOut>(expr)
-
-    static member CreateSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TIn3 -> 'TOut) = System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>(expr)
+    static member CreateSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TIn3 -> 'TOut) = 
+        System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>(expr)

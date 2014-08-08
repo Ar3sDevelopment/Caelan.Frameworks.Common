@@ -37,22 +37,6 @@ type public AutoMapperExtender =
 type public FunctionConverter = 
     
     [<Extension>]
-    static member ToFSharpFunc(expr : System.Linq.Expressions.Expression<System.Func<'TOut>>) = 
-        fun _ -> expr.Compile().Invoke()
-    
-    [<Extension>]
-    static member ToFSharpFunc(expr : System.Linq.Expressions.Expression<System.Func<'TIn, 'TOut>>) = 
-        fun p -> expr.Compile().Invoke(p)
-    
-    [<Extension>]
-    static member ToFSharpFunc(expr : System.Linq.Expressions.Expression<System.Func<'TIn1, 'TIn2, 'TOut>>) = 
-        fun p1 p2 -> expr.Compile().Invoke(p1, p2)
-    
-    [<Extension>]
-    static member ToFSharpFunc(expr : System.Linq.Expressions.Expression<System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>>) = 
-        fun p1 p2 p3 -> expr.Compile().Invoke(p1, p2, p3)
-    
-    [<Extension>]
     static member ToFSharpFunc(expr : System.Func<'TOut>) = fun _ -> expr.Invoke()
     
     [<Extension>]
@@ -76,14 +60,6 @@ type public FunctionConverter =
     [<Extension>]
     static member ToSystemFunc(expr : 'TIn1 -> 'TIn2 -> 'TIn3 -> 'TOut) = System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>(expr)
     
-    static member CreateFSharpFunc(expr : System.Linq.Expressions.Expression<System.Func<'TOut>>) = 
-        FunctionConverter.ToFSharpFunc expr
-    static member CreateFSharpFunc(expr : System.Linq.Expressions.Expression<System.Func<'TIn, 'TOut>>) = 
-        FunctionConverter.ToFSharpFunc expr
-    static member CreateFSharpFunc(expr : System.Linq.Expressions.Expression<System.Func<'TIn1, 'TIn2, 'TOut>>) = 
-        FunctionConverter.ToFSharpFunc expr
-    static member CreateFSharpFunc(expr : System.Linq.Expressions.Expression<System.Func<'TIn1, 'TIn2, 'TIn3, 'TOut>>) = 
-        FunctionConverter.ToFSharpFunc expr
     static member CreateFSharpFunc(expr : System.Func<'TOut>) = FunctionConverter.ToFSharpFunc expr
     static member CreateFSharpFunc(expr : System.Func<'TIn, 'TOut>) = FunctionConverter.ToFSharpFunc expr
     static member CreateFSharpFunc(expr : System.Func<'TIn1, 'TIn2, 'TOut>) = FunctionConverter.ToFSharpFunc expr

@@ -75,8 +75,7 @@ type GenericBuilder() =
              |> Activator.CreateInstance) :?> 'TBuilder
         
         let customBuilder = 
-            match Assembly.GetAssembly(typeof<'TDestination>) 
-                  |> GenericBuilder.FindCustomBuilderType(builder.GetType()) with
+            match Assembly.GetAssembly(typeof<'TDestination>) |> GenericBuilder.FindCustomBuilderType(builder.GetType()) with
             | null -> 
                 (match Assembly.GetEntryAssembly() with
                  | null -> Assembly.GetCallingAssembly()
@@ -85,7 +84,7 @@ type GenericBuilder() =
             | customBuilderType -> customBuilderType
         
         match customBuilder with
-        | null ->
+        | null -> 
             if Mapper.FindTypeMapFor<'TSource, 'TDestination>() = null then Mapper.AddProfile(builder)
             builder
         | _ -> Activator.CreateInstance(customBuilder) :?> 'TBuilder
@@ -97,7 +96,7 @@ type GenericBuilder() =
 [<AbstractClass>]
 type BuilderConfiguration() = 
     static member Configure() = 
-        Mapper.Initialize(fun a -> 
+        let types = 
             Assembly.GetCallingAssembly().GetTypes()
             |> (Seq.append (Assembly.GetCallingAssembly().GetReferencedAssemblies()
                             |> Seq.map (fun t -> Assembly.Load(t))
@@ -107,4 +106,5 @@ type BuilderConfiguration() =
                    (typeof<Profile>).IsAssignableFrom(t) = true && t.GetConstructor(Type.EmptyTypes) <> null 
                    && t.IsGenericTypeDefinition = false)
             |> Seq.map (fun t -> Activator.CreateInstance(t) :?> Profile)
-            |> Seq.iter (fun t -> a.AddProfile(t)))
+
+        Mapper.Initialize(fun a  -> types |> Seq.iter (fun t -> a.AddProfile(t)))

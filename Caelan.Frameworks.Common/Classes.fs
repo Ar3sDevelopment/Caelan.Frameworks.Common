@@ -2,10 +2,7 @@
 
 open System
 open System.Reflection
-open System.Threading.Tasks
-open System.Linq
 open AutoMapper
-open AutoMapper.Internal
 open Caelan.Frameworks.Common.Extenders
 
 type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestination : equality and 'TSource : null and 'TDestination : null>() = 

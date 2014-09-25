@@ -9,13 +9,13 @@ type PasswordHelper() =
     abstract GetDefaultPassword : unit -> string
     abstract GetDefaultPasswordEncrypted : unit -> string
     override this.GetDefaultPasswordEncrypted() = this.EncryptPassword(this.GetDefaultPassword())
-    abstract Sha512Encrypt : password:string -> string
+    abstract EncryptMethod : password:string -> string
     
-    override __.Sha512Encrypt(password) = 
+    override __.EncryptMethod(password) = 
         use provider = new SHA512CryptoServiceProvider()
         provider.ComputeHash(Encoding.Default.GetBytes(password))
         |> Array.map (fun t -> t.ToString("x2").ToLower())
         |> String.concat ""
     
     abstract EncryptPassword : password:string -> string
-    override this.EncryptPassword(password) = this.Sha512Encrypt(this.GetSalt() + this.Sha512Encrypt(password))
+    override this.EncryptPassword(password) = this.EncryptMethod(this.GetSalt() + this.EncryptMethod(password))

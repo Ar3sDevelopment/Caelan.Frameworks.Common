@@ -16,20 +16,14 @@ type BaseBuilder<'TSource, 'TDestination when 'TSource : equality and 'TDestinat
     override this.Configure() = 
         base.Configure()
         let mappingExpression = Mapper.CreateMap<'TSource, 'TDestination>()
-        mappingExpression.AfterMap(fun source destination -> 
-            let refDest = ref destination
-            this.AfterBuild(source, refDest))
-        |> ignore
+        mappingExpression.AfterMap(fun source destination -> this.AfterBuild(source, ref destination)) |> ignore
         this.AddMappingConfigurations(mappingExpression)
     
     member this.Build(source : 'TSource) = 
-        match source with
-        | null -> Unchecked.defaultof<'TDestination>
-        | _ -> 
-            let dest = ref Unchecked.defaultof<'TDestination>
-            if (!dest = null) then dest := Activator.CreateInstance<'TDestination>()
-            this.Build(source, dest)
-            !dest
+        let dest = ref Unchecked.defaultof<'TDestination>
+        if (!dest = null) then dest := Activator.CreateInstance<'TDestination>()
+        this.Build(source, dest)
+        !dest
     
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
     
@@ -52,12 +46,13 @@ type GenericBuilder() =
         match assembly.GetTypes() |> Seq.tryFind (fun t -> t.BaseType = builderType) with
         | Some(value) -> value
         | None -> 
+            let assemblies = 
+                assembly.GetReferencedAssemblies()
+                |> Seq.sortBy (fun t -> t.Name)
+                |> Seq.map (fun t -> Assembly.Load(t))
+                |> Seq.collect (fun t -> t.GetTypes() |> Seq.filter (fun x -> x.BaseType = builderType))
             query { 
-                for refAssembly in (assembly.GetReferencedAssemblies()
-                                    |> Seq.sortBy (fun t -> t.Name)
-                                    |> Seq.map (fun t -> Assembly.Load(t))
-                                    |> Seq.collect 
-                                           (fun t -> t.GetTypes() |> Seq.filter (fun x -> x.BaseType = builderType))) do
+                for refAssembly in assemblies do
                     select refAssembly
                     exactlyOneOrDefault
             }
@@ -80,11 +75,13 @@ type GenericBuilder() =
                 |> GenericBuilder.FindCustomBuilderType(builder.GetType())
             | customBuilderType -> customBuilderType
         
-        match customBuilder with
-        | null -> 
-            if Mapper.FindTypeMapFor<'TSource, 'TDestination>() = null then Mapper.AddProfile(builder)
-            builder
-        | _ -> Activator.CreateInstance(customBuilder) :?> 'TBuilder
+        let rightBuilder = 
+            match customBuilder with
+            | null -> builder
+            | _ -> Activator.CreateInstance(customBuilder) :?> 'TBuilder
+        
+        if Mapper.FindTypeMapFor<'TSource, 'TDestination>() = null then Mapper.AddProfile(rightBuilder)
+        rightBuilder
     
     static member Create<'TSource, 'TDestination when 'TSource : equality and 'TDestination : equality and 'TSource : null and 'TDestination : null>() = 
         GenericBuilder.CreateGenericBuilder<BaseBuilder<'TSource, 'TDestination>, 'TSource, 'TDestination>()
@@ -93,15 +90,19 @@ type GenericBuilder() =
 [<AbstractClass>]
 type BuilderConfiguration() = 
     static member Configure() = 
+        let typeFilter t = 
+            (typeof<Profile>).IsAssignableFrom(t) = true && t.GetConstructor(Type.EmptyTypes) <> null 
+            && t.IsGenericTypeDefinition = false
+        
+        let assembliesTypes = 
+            Assembly.GetCallingAssembly().GetReferencedAssemblies()
+            |> Array.map (fun t -> Assembly.Load(t))
+            |> Array.collect (fun t -> t.GetTypes())
+        
         let types = 
             Assembly.GetCallingAssembly().GetTypes()
-            |> (Seq.append (Assembly.GetCallingAssembly().GetReferencedAssemblies()
-                            |> Seq.map (fun t -> Assembly.Load(t))
-                            |> Seq.collect (fun t -> t.GetTypes())))
-            |> Seq.filter 
-                   (fun t -> 
-                   (typeof<Profile>).IsAssignableFrom(t) = true && t.GetConstructor(Type.EmptyTypes) <> null 
-                   && t.IsGenericTypeDefinition = false)
-            |> Seq.map (fun t -> Activator.CreateInstance(t) :?> Profile)
-
-        Mapper.Initialize(fun a  -> types |> Seq.iter (fun t -> a.AddProfile(t)))
+            |> Array.append (assembliesTypes)
+            |> Array.filter typeFilter
+            |> Array.map (fun t -> Activator.CreateInstance(t) :?> Profile)
+        
+        Mapper.Initialize(fun a -> types |> Array.iter (fun t -> a.AddProfile(t)))

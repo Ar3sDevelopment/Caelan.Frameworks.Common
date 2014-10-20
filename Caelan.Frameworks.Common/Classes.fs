@@ -1,8 +1,10 @@
 ﻿namespace Caelan.Frameworks.Common.Classes
 
+open System
+open System.Reflection
 open Caelan.Frameworks.Common.Interfaces
 
-[<AbstractClass; Sealed>]
+[<Sealed>]
 type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'TSource, 'TDestination>) = 
     member __.Build(source : 'TSource) = mapper.Map(source)
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
@@ -11,3 +13,32 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     member this.BuildAsync(source, destination) = 
         async { return this.Build(source, ref destination) } |> Async.StartAsTask
     member this.BuildListAsync(sourceList) = async { return this.BuildList(sourceList) } |> Async.StartAsTask
+    new() = 
+        let findMapper (assembly : Assembly) = 
+            match assembly with
+            | null -> None
+            | _ -> 
+                let baseMapper = typeof<IMapper<'TSource, 'TDestination>>
+                match assembly.GetTypes() |> Seq.tryFind (fun t -> baseMapper.IsAssignableFrom(t)) with
+                | Some(assemblyMapper) -> 
+                    Some(Activator.CreateInstance(assemblyMapper) :?> IMapper<'TSource, 'TDestination>)
+                | None -> None
+        
+        let rec findMapperInAssemblies assembliesList = 
+            match assembliesList with
+            | head :: tail -> 
+                match head |> findMapper with
+                | Some(validMapper) -> validMapper
+                | None -> tail |> findMapperInAssemblies
+            | [] -> 
+                { new IMapper<'TSource, 'TDestination> with
+                      member __.Map(_) = Activator.CreateInstance(typeof<'TDestination>) :?> 'TDestination
+                      member x.Map(source, destination) = destination := x.Map(source) }
+        
+        let finalAssembly = 
+            [ Assembly.GetExecutingAssembly()
+              Assembly.GetEntryAssembly()
+              Assembly.GetCallingAssembly() ]
+            |> findMapperInAssemblies
+        
+        Builder<'TSource, 'TDestination>(finalAssembly)

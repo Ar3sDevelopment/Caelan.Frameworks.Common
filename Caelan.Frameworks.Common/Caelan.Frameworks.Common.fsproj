@@ -53,6 +53,7 @@
     <Compile Include="IMapper.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Classes.fs" />
+    <Compile Include="DefaultMapper.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Caelan.Frameworks.Common", "Caelan.Frameworks.Common\Caelan.Frameworks.Common.fsproj", "{13389501-A209-4BEC-B442-1B0B8B2F1A21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caelan.Frameworks.Common.AutoMapper", "Caelan.Frameworks.Common.AutoMapper\Caelan.Frameworks.Common.AutoMapper.csproj", "{055C3920-248D-4975-BCAB-A5C5B62A825F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{13389501-A209-4BEC-B442-1B0B8B2F1A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13389501-A209-4BEC-B442-1B0B8B2F1A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13389501-A209-4BEC-B442-1B0B8B2F1A21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055C3920-248D-4975-BCAB-A5C5B62A825F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055C3920-248D-4975-BCAB-A5C5B62A825F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055C3920-248D-4975-BCAB-A5C5B62A825F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055C3920-248D-4975-BCAB-A5C5B62A825F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

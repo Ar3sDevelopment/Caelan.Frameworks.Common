@@ -12,6 +12,6 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
             (this :> IMapper<'TSource, 'TDestination>).Map(source, refDest)
             !refDest
     
-    abstract Map : 'TSource * 'TDestination ref -> unit
-    abstract Map : 'TSource -> 'TDestination
+    abstract Map : source:'TSource * destination:'TDestination ref -> unit
+    abstract Map : source:'TSource -> 'TDestination
     override this.Map(source) = (this :> IMapper<'TSource, 'TDestination>).Map(source)

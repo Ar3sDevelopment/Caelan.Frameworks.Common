@@ -8,10 +8,10 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
     interface IMapper<'TSource, 'TDestination> with
         member this.Map(source : 'TSource, destination : 'TDestination ref) = this.Map(source, destination)
         member this.Map(source) = 
-            let dest : 'TDestination = null
-            let refDest = ref dest
+            let refDest : 'TDestination ref = ref null
             (this :> IMapper<'TSource, 'TDestination>).Map(source, refDest)
             !refDest
     
     abstract Map : 'TSource * 'TDestination ref -> unit
-    member this.Map(source) = (this :> IMapper<'TSource, 'TDestination>).Map(source)
+    abstract Map : 'TSource -> 'TDestination
+    override this.Map(source) = (this :> IMapper<'TSource, 'TDestination>).Map(source)

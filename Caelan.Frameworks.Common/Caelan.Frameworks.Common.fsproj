@@ -52,7 +52,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="IMapper.fs" />
     <Compile Include="Helpers.fs" />
-    <Compile Include="Classes.fs" />
+    <Compile Include="Builder.fs" />
     <Compile Include="DefaultMapper.fs" />
   </ItemGroup>
   <ItemGroup>

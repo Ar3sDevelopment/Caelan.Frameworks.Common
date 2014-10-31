@@ -10,8 +10,7 @@ namespace Caelan.Frameworks.Common.AutoMapper.Mappers
 	{
 		public TDestination Map(TSource source)
 		{
-			TDestination dest = null;
-			var destRef = new FSharpRef<TDestination>(dest);
+			var destRef = new FSharpRef<TDestination>(null);
 
 			Map(source, destRef);
 
@@ -20,7 +19,10 @@ namespace Caelan.Frameworks.Common.AutoMapper.Mappers
 
 		public void Map(TSource source, FSharpRef<TDestination> destination)
 		{
-			Mapper.Map(source, destination.Value);
+			if (destination.Value != null)
+				Mapper.Map(source, destination.Value);
+			else
+				destination.Value = Mapper.Map<TSource, TDestination>(source);
 		}
 	}
 }

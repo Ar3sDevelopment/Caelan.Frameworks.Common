@@ -21,7 +21,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
             | null -> None
             | _ -> 
                 let baseMapper = typeof<IMapper<'TSource, 'TDestination>>
-                match assembly.GetTypes() |> Seq.tryFind (fun t -> baseMapper.IsAssignableFrom(t)) with
+                match assembly.GetTypes() |> Seq.tryFind (fun t -> baseMapper.IsAssignableFrom(t) && t.IsInterface <> false && t.IsAbstract <> false) with
                 | Some(assemblyMapper) -> 
                     Some(Activator.CreateInstance(assemblyMapper) :?> IMapper<'TSource, 'TDestination>)
                 | None -> None
@@ -30,17 +30,20 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
             match assembliesList with
             | head :: tail -> 
                 match head |> findMapper with
-                | Some(validMapper) -> validMapper
-                | None -> tail |> findMapperInAssemblies
+                | Some(validMapper) -> Some(validMapper)
+                | None ->
+                    match tail |> findMapperInAssemblies with
+                    | Some(valid) -> Some(valid)
+                    | None -> None
             | [] -> 
-                { new IMapper<'TSource, 'TDestination> with
+                Some({ new IMapper<'TSource, 'TDestination> with
                       member __.Map(_) = Activator.CreateInstance(typeof<'TDestination>) :?> 'TDestination
-                      member x.Map(source, destination) = destination <- x.Map(source) }
+                      member x.Map(source, destination) = destination <- x.Map(source) })
         
-        let finalAssembly = 
+        let finalMapper = 
             [ Assembly.GetExecutingAssembly()
               Assembly.GetEntryAssembly()
               Assembly.GetCallingAssembly() ]
             |> findMapperInAssemblies
         
-        Builder<'TSource, 'TDestination>(finalAssembly)
+        Builder<'TSource, 'TDestination>(finalMapper.Value)

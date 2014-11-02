@@ -1,6 +1,7 @@
 ﻿#r "System.Data.dll"
 #r "FSharp.Data.TypeProviders.dll"
 #r "System.Data.Linq.dll"
+#r "bin/Debug/Caelan.Frameworks.Common.dll"
 
 open System
 open System.Data
@@ -18,5 +19,13 @@ type TestA() =
 type TestB() =
     member val A = "test2" with get, set
 
+type TestMapper() =
+    inherit DefaultMapper<TestA, TestB>()
+
+    override __.Map(source, destination) =
+        destination.A <- source.A
+
 let testA = TestA()
-let testB = Builder<TestA, TestB>.Create().Build(testA)
+let testB = Builder<TestA, TestB>.Create((*TestMapper()*)).Build(testA)
+
+testB.A

@@ -48,12 +48,12 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
-    <None Include="Script.fsx" />
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="IMapper.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Builder.fs" />
     <Compile Include="DefaultMapper.fs" />
+    <Compile Include="Script.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

@@ -10,10 +10,10 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     static member Create(mapper : IMapper<'TSource, 'TDestination>) = Builder<'TSource, 'TDestination>(mapper)
     member __.Build(source : 'TSource) = mapper.Map(source)
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
-    member __.Build(source : 'TSource, destination : 'TDestination ref) = mapper.Map(source, destination)
+    member __.Build(source : 'TSource, destination : 'TDestination byref) = mapper.Map(source, ref destination)
     member this.BuildAsync(source) = async { return this.Build(source) } |> Async.StartAsTask
     member this.BuildAsync(source, destination) = 
-        async { return this.Build(source, ref destination) } |> Async.StartAsTask
+        async { return this.Build(source, destination) } |> Async.StartAsTask
     member this.BuildListAsync(sourceList) = async { return this.BuildList(sourceList) } |> Async.StartAsTask
     new() = 
         let findMapper (assembly : Assembly) = 
@@ -35,7 +35,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
             | [] -> 
                 { new IMapper<'TSource, 'TDestination> with
                       member __.Map(_) = Activator.CreateInstance(typeof<'TDestination>) :?> 'TDestination
-                      member x.Map(source, destination) = destination := x.Map(source) }
+                      member x.Map(source, destination) = destination <- x.Map(source) }
         
         let finalAssembly = 
             [ Assembly.GetExecutingAssembly()

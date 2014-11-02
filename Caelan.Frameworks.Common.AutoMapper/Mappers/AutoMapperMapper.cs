@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Caelan.Frameworks.Common.Interfaces;
 using Microsoft.FSharp.Core;
 
@@ -10,19 +11,19 @@ namespace Caelan.Frameworks.Common.AutoMapper.Mappers
 	{
 		public TDestination Map(TSource source)
 		{
-			var destRef = new FSharpRef<TDestination>(null);
+			var destRef = Activator.CreateInstance<TDestination>();
 
-			Map(source, destRef);
+			Map(source, ref destRef);
 
-			return destRef.Value;
+			return destRef;
 		}
 
-		public void Map(TSource source, FSharpRef<TDestination> destination)
+		public void Map(TSource source, ref TDestination destination)
 		{
-			if (destination.Value != null)
-				Mapper.Map(source, destination.Value);
+			if (destination != null)
+				Mapper.Map(source, destination);
 			else
-				destination.Value = Mapper.Map<TSource, TDestination>(source);
+				destination = Mapper.Map<TSource, TDestination>(source);
 		}
 	}
 }

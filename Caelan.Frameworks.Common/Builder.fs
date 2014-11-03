@@ -12,8 +12,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
     member __.Build(source : 'TSource, destination : 'TDestination byref) = mapper.Map(source, ref destination)
     member this.BuildAsync(source) = async { return this.Build(source) } |> Async.StartAsTask
-    member this.BuildAsync(source, destination) = 
-        async { return this.Build(source, destination) } |> Async.StartAsTask
+    member this.BuildAsync(source, destination) = async { return this.Build(source, destination) } |> Async.StartAsTask
     member this.BuildListAsync(sourceList) = async { return this.BuildList(sourceList) } |> Async.StartAsTask
     new() = 
         let findMapper (assembly : Assembly) = 
@@ -21,7 +20,9 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
             | null -> None
             | _ -> 
                 let baseMapper = typeof<IMapper<'TSource, 'TDestination>>
-                match assembly.GetTypes() |> Seq.tryFind (fun t -> baseMapper.IsAssignableFrom(t) && t.IsInterface <> false && t.IsAbstract <> false) with
+                match assembly.GetTypes() 
+                      |> Seq.tryFind 
+                             (fun t -> baseMapper.IsAssignableFrom(t) && t.IsInterface <> false && t.IsAbstract <> false) with
                 | Some(assemblyMapper) -> 
                     Some(Activator.CreateInstance(assemblyMapper) :?> IMapper<'TSource, 'TDestination>)
                 | None -> None
@@ -30,20 +31,17 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
             match assembliesList with
             | head :: tail -> 
                 match head |> findMapper with
-                | Some(validMapper) -> Some(validMapper)
-                | None ->
-                    match tail |> findMapperInAssemblies with
-                    | Some(valid) -> Some(valid)
-                    | None -> None
+                | Some(validMapper) -> validMapper
+                | None -> tail |> findMapperInAssemblies
             | [] -> 
-                Some({ new IMapper<'TSource, 'TDestination> with
+                { new IMapper<'TSource, 'TDestination> with
                       member __.Map(_) = Activator.CreateInstance(typeof<'TDestination>) :?> 'TDestination
-                      member x.Map(source, destination) = destination <- x.Map(source) })
+                      member x.Map(source, destination) = destination <- x.Map(source) }
         
-        let finalMapper = 
+        let assemblies = 
             [ Assembly.GetExecutingAssembly()
               Assembly.GetEntryAssembly()
               Assembly.GetCallingAssembly() ]
-            |> findMapperInAssemblies
         
-        Builder<'TSource, 'TDestination>(finalMapper.Value)
+        let finalMapper = assemblies |> Seq.filter (fun t -> t <> null) |> Seq.collect (fun t -> t.GetReferencedAssemblies() |> Seq.map (fun x -> Assembly.Load(x))) |> Seq.append assemblies |> Seq.toList |> findMapperInAssemblies
+        Builder<'TSource, 'TDestination>(finalMapper)

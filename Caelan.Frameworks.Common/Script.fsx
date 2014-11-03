@@ -1,15 +1,7 @@
-﻿#r "System.Data.dll"
-#r "FSharp.Data.TypeProviders.dll"
-#r "System.Data.Linq.dll"
-#r "bin/Debug/Caelan.Frameworks.Common.dll"
+﻿#r @"bin\Debug\Caelan.Frameworks.Common.dll"
 
-open System
-open System.Data
-open System.Data.Linq
-open Microsoft.FSharp.Data.TypeProviders
-open Microsoft.FSharp.Linq
-open Caelan.Frameworks.Common.Interfaces
 open Caelan.Frameworks.Common.Classes
+//open Caelan.Frameworks.Common.Interfaces
 
 [<AllowNullLiteral>]
 type TestA() =
@@ -26,6 +18,6 @@ type TestMapper() =
         destination.A <- source.A
 
 let testA = TestA()
-let testB = Builder<TestA, TestB>.Create((*TestMapper()*)).Build(testA)
+let testB = Builder<TestA, TestB>.Create(TestMapper()).Build(testA)
 
 testB.A

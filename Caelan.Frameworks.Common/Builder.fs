@@ -27,8 +27,8 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
                     Some(Activator.CreateInstance(assemblyMapper) :?> IMapper<'TSource, 'TDestination>)
                 | None -> None
         
-        let rec findMapperInAssemblies assembliesList = 
-            match assembliesList with
+        let rec findMapperInAssemblies assemblies = 
+            match assemblies with
             | head :: tail -> 
                 match head |> findMapper with
                 | Some(validMapper) -> validMapper
@@ -44,13 +44,17 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
               Assembly.GetCallingAssembly()
               (typeof<'TSource>).Assembly
               (typeof<'TDestination>).Assembly ]
+            |> Seq.filter (fun t -> t <> null)
         
         let allAssemblies = 
             assemblies
             |> Seq.filter (fun t -> t <> null)
             |> Seq.collect (fun t -> t.GetReferencedAssemblies() |> Seq.map (fun x -> Assembly.Load(x)))
             |> Seq.append assemblies
-            |> Seq.toList
         
-        let finalMapper = allAssemblies |> findMapperInAssemblies
+        let finalMapper = 
+            allAssemblies
+            |> Seq.toList
+            |> findMapperInAssemblies
+        
         Builder<'TSource, 'TDestination>(finalMapper)

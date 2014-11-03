@@ -16,16 +16,10 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     member this.BuildListAsync(sourceList) = async { return this.BuildList(sourceList) } |> Async.StartAsTask
     new() = 
         let findMapper (assembly : Assembly) = 
-            match assembly with
-            | null -> None
-            | _ -> 
-                let baseMapper = typeof<IMapper<'TSource, 'TDestination>>
-                match assembly.GetTypes() 
-                      |> Seq.tryFind 
-                             (fun t -> baseMapper.IsAssignableFrom(t) && t.IsInterface = false && t.IsAbstract = false) with
-                | Some(assemblyMapper) -> 
-                    Some(Activator.CreateInstance(assemblyMapper) :?> IMapper<'TSource, 'TDestination>)
-                | None -> None
+            let baseMapper = typeof<IMapper<'TSource, 'TDestination>>
+            match assembly.GetTypes() |> Seq.tryFind (fun t -> baseMapper.IsAssignableFrom(t) && not t.IsInterface && not t.IsAbstract) with
+            | Some(assemblyMapper) -> Some(Activator.CreateInstance(assemblyMapper) :?> IMapper<'TSource, 'TDestination>)
+            | None -> None
         
         let rec findMapperInAssemblies assemblies = 
             match assemblies with
@@ -42,13 +36,12 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
             [ Assembly.GetExecutingAssembly()
               Assembly.GetEntryAssembly()
               Assembly.GetCallingAssembly()
-              (typeof<'TSource>).Assembly
-              (typeof<'TDestination>).Assembly ]
+              typeof<'TSource>.Assembly
+              typeof<'TDestination>.Assembly ]
             |> Seq.filter (fun t -> t <> null)
         
         let allAssemblies = 
             assemblies
-            |> Seq.filter (fun t -> t <> null)
             |> Seq.collect (fun t -> t.GetReferencedAssemblies() |> Seq.map (fun x -> Assembly.Load(x)))
             |> Seq.append assemblies
         

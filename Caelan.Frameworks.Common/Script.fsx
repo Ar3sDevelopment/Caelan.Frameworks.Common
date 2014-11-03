@@ -1,4 +1,4 @@
-﻿#r @"bin\Debug\Caelan.Frameworks.Common.dll"
+﻿#r @"bin/Debug/Caelan.Frameworks.Common.dll"
 
 open Caelan.Frameworks.Common.Classes
 //open Caelan.Frameworks.Common.Interfaces

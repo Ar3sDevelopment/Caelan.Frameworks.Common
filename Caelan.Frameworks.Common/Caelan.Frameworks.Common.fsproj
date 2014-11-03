@@ -49,11 +49,12 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="IMapper.fs" />
-    <Compile Include="Helpers.fs" />
-    <Compile Include="DefaultMapper.fs" />
-    <Compile Include="Builder.fs" />
     <None Include="Script.fsx" />
+    <Compile Include="Interfaces\IMapper.fs" />
+    <Compile Include="Interfaces\IPasswordEncryptor.fs" />
+    <Compile Include="Helpers\PasswordHelper.fs" />
+    <Compile Include="Classes\DefaultMapper.fs" />
+    <Compile Include="Classes\Builder.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -71,4 +72,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Classes\" />
+  </ItemGroup>
 </Project>

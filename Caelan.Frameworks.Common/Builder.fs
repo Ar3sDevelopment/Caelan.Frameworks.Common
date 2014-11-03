@@ -22,7 +22,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
                 let baseMapper = typeof<IMapper<'TSource, 'TDestination>>
                 match assembly.GetTypes() 
                       |> Seq.tryFind 
-                             (fun t -> baseMapper.IsAssignableFrom(t) && t.IsInterface <> false && t.IsAbstract <> false) with
+                             (fun t -> baseMapper.IsAssignableFrom(t) && t.IsInterface = false && t.IsAbstract = false) with
                 | Some(assemblyMapper) -> 
                     Some(Activator.CreateInstance(assemblyMapper) :?> IMapper<'TSource, 'TDestination>)
                 | None -> None
@@ -41,7 +41,16 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
         let assemblies = 
             [ Assembly.GetExecutingAssembly()
               Assembly.GetEntryAssembly()
-              Assembly.GetCallingAssembly() ]
+              Assembly.GetCallingAssembly()
+              (typeof<'TSource>).Assembly
+              (typeof<'TDestination>).Assembly ]
         
-        let finalMapper = assemblies |> Seq.filter (fun t -> t <> null) |> Seq.collect (fun t -> t.GetReferencedAssemblies() |> Seq.map (fun x -> Assembly.Load(x))) |> Seq.append assemblies |> Seq.toList |> findMapperInAssemblies
+        let allAssemblies = 
+            assemblies
+            |> Seq.filter (fun t -> t <> null)
+            |> Seq.collect (fun t -> t.GetReferencedAssemblies() |> Seq.map (fun x -> Assembly.Load(x)))
+            |> Seq.append assemblies
+            |> Seq.toList
+        
+        let finalMapper = allAssemblies |> findMapperInAssemblies
         Builder<'TSource, 'TDestination>(finalMapper)

@@ -18,6 +18,6 @@ type TestMapper() =
         destination.A <- source.A
 
 let testA = TestA()
-let testB = Builder<TestA, TestB>.Create(TestMapper()).Build(testA)
+let testB = Builder<TestA, TestB>.Create().Build(testA)
 
 testB.A

@@ -3,6 +3,7 @@
 open System
 open System.Reflection
 open Caelan.Frameworks.Common.Interfaces
+open Caelan.Frameworks.Common.Helpers
 
 [<Sealed>]
 type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'TSource, 'TDestination>) = 
@@ -35,6 +36,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
         let assemblies = 
             [ Assembly.GetExecutingAssembly()
               Assembly.GetEntryAssembly()
+              AssemblyHelper.GetWebEntryAssembly()
               Assembly.GetCallingAssembly()
               typeof<'TSource>.Assembly
               typeof<'TDestination>.Assembly ]

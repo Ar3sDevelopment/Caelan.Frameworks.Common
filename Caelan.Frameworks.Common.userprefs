@@ -1,6 +1,11 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Caelan.Frameworks.Common/Classes/Builder.fs">
+    <Files>
+      <File FileName="Caelan.Frameworks.Common.Tests/TestBuilder.cs" Line="3" Column="3" />
+      <File FileName="Caelan.Frameworks.Common/Classes/Builder.fs" Line="52" Column="52" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

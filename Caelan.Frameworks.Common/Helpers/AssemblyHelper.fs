@@ -6,13 +6,13 @@ open System.Web
 
 module AssemblyHelper =
     let GetWebEntryAssembly() =
-        if HttpContext.Current = null || HttpContext.Current.ApplicationInstance = null then
-            null
-        else
-            let mutable t = HttpContext.Current.ApplicationInstance.GetType()
-            while t <> null && t.Namespace = "ASP" do
-                t <- t.BaseType
-            
-            match t with
-            | null -> null
-            | _ -> t.Assembly
+        match HttpContext.Current with
+        | currentContext when currentContext = null || currentContext.ApplicationInstance = null -> null
+        | _ ->
+            let rec getAssembly (asmType : Type) =
+                match asmType with
+                | null -> null
+                | value when value.Namespace <> "ASP" -> value.Assembly
+                | _ -> getAssembly asmType.BaseType
+
+            HttpContext.Current.ApplicationInstance.GetType() |> getAssembly

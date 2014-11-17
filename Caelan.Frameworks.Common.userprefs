@@ -1,8 +1,8 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Caelan.Frameworks.Common/Helpers/AssemblyHelper.fs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Caelan.Frameworks.Common/Interfaces/IMapper.fs">
     <Files>
-      <File FileName="Caelan.Frameworks.Common/Helpers/AssemblyHelper.fs" Line="76" Column="76" />
+      <File FileName="Caelan.Frameworks.Common/Interfaces/IMapper.fs" Line="30" Column="30" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

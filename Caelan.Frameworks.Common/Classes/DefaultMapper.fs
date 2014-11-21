@@ -9,9 +9,12 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
     interface IMapper<'TSource, 'TDestination> with
         member this.Map(source : 'TSource, destination : 'TDestination byref) = this.Map(source, ref destination)
         member this.Map(source) = 
-            let destination = Activator.CreateInstance<'TDestination>()
-            (this :> IMapper<'TSource, 'TDestination>).Map(source, ref destination)
-            destination
+            match source with
+            | null -> Unchecked.defaultof<'TDestination>
+            | _ ->
+                let destination = Activator.CreateInstance<'TDestination>()
+                (this :> IMapper<'TSource, 'TDestination>).Map(source, ref destination)
+                destination
     
     abstract Map : source:'TSource * destination:'TDestination byref -> unit
     abstract Map : source:'TSource -> 'TDestination

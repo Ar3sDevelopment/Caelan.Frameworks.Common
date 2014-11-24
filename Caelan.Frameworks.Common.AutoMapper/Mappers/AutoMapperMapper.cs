@@ -12,9 +12,14 @@ namespace Caelan.Frameworks.Common.AutoMapper.Mappers
 	{
 		public TDestination Map(TSource source)
 		{
+			return Map(source, MapType.NewObject);
+		}
+
+		public TDestination Map(TSource source, MapType mapType)
+		{
 			var destRef = Activator.CreateInstance<TDestination>();
 
-			Map(source, ref destRef, MapType.NewObject);
+			Map(source, ref destRef, mapType);
 
 			return destRef;
 		}

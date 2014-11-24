@@ -18,8 +18,10 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     new() = 
         let findMapper (assembly : Assembly) = 
             let baseMapper = typeof<IMapper<'TSource, 'TDestination>>
-            match assembly.GetTypes() |> Seq.tryFind (fun t -> baseMapper.IsAssignableFrom(t) && not t.IsInterface && not t.IsAbstract) with
-            | Some(assemblyMapper) -> Some(Activator.CreateInstance(assemblyMapper) :?> IMapper<'TSource, 'TDestination>)
+            match assembly.GetTypes() 
+                  |> Seq.tryFind (fun t -> baseMapper.IsAssignableFrom(t) && not t.IsInterface && not t.IsAbstract) with
+            | Some(assemblyMapper) -> 
+                Some(Activator.CreateInstance(assemblyMapper) :?> IMapper<'TSource, 'TDestination>)
             | None -> None
         
         let rec findMapperInAssemblies assemblies = 
@@ -30,8 +32,9 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
                 | None -> tail |> findMapperInAssemblies
             | [] -> 
                 { new IMapper<'TSource, 'TDestination> with
-                      member __.Map(_) = Activator.CreateInstance(typeof<'TDestination>) :?> 'TDestination
-                      member x.Map(source, destination) = destination <- x.Map(source) }
+                      member __.Map(source) = Activator.CreateInstance(typeof<'TDestination>) :?> 'TDestination
+                      member x.Map(source, destination) = destination <- x.Map(source)
+                      member x.Map(source, destination, mapType) = destination <- x.Map(source) }
         
         let assemblies = 
             [ Assembly.GetExecutingAssembly()

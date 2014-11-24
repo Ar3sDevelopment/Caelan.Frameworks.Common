@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <None Include="Script.fsx" />
+    <Compile Include="MapType.fs" />
     <Compile Include="Interfaces\IMapper.fs" />
     <Compile Include="Interfaces\IPasswordEncryptor.fs" />
     <Compile Include="Helpers\AssemblyHelper.fs" />
@@ -74,9 +75,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="Classes\" />
-  </ItemGroup>
 </Project>

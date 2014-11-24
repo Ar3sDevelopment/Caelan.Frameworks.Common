@@ -1,5 +1,6 @@
 ﻿using System;
 using AutoMapper;
+using Caelan.Frameworks.Common.Enums;
 using Caelan.Frameworks.Common.Interfaces;
 using Microsoft.FSharp.Core;
 
@@ -13,17 +14,29 @@ namespace Caelan.Frameworks.Common.AutoMapper.Mappers
 		{
 			var destRef = Activator.CreateInstance<TDestination>();
 
-			Map(source, ref destRef);
+			Map(source, ref destRef, MapType.NewObject);
 
 			return destRef;
 		}
 
 		public void Map(TSource source, ref TDestination destination)
 		{
-			if (destination != null)
-				Mapper.Map(source, destination);
-			else
-				destination = Mapper.Map<TSource, TDestination>(source);
+			Map(source, ref destination, MapType.EditObject);
+		}
+
+		public void Map(TSource source, ref TDestination destination, MapType mapType)
+		{
+			switch (mapType)
+			{
+				case MapType.NewObject:
+					break;
+				case MapType.EditObject:
+					if (destination != null)
+						Mapper.Map(source, destination);
+					else
+						destination = Mapper.Map<TSource, TDestination>(source);
+					break;
+			}
 		}
 	}
 }

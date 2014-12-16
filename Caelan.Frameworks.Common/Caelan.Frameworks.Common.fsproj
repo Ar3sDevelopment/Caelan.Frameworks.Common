@@ -50,7 +50,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <None Include="Script.fsx" />
-    <Compile Include="Enums\MapType.fs" />
     <Compile Include="Interfaces\IMapper.fs" />
     <Compile Include="Interfaces\IPasswordEncryptor.fs" />
     <Compile Include="Helpers\AssemblyHelper.fs" />
@@ -75,7 +74,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="Enums\" />
-  </ItemGroup>
 </Project>

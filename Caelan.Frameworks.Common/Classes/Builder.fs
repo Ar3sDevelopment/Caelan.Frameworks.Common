@@ -40,10 +40,21 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
                           Activator.CreateInstance(typeof<'TDestination>) :?> 'TDestination
                       member x.Map(source, destination : 'TDestination byref) = destination <- x.Map(source) }
         
+        let additionalAssemblies = 
+            [ Assembly.GetExecutingAssembly()
+              Assembly.GetEntryAssembly()
+              AssemblyHelper.GetWebEntryAssembly()
+              Assembly.GetCallingAssembly()
+              typeof<'TSource>.Assembly
+              typeof<'TDestination>.Assembly ]
+            |> Seq.filter (fun t -> t <> null)
+        
         let allAssemblies = 
             assemblies
+            |> Seq.append additionalAssemblies
             |> Seq.collect (fun t -> t.GetReferencedAssemblies() |> Seq.map (fun x -> Assembly.Load(x)))
             |> Seq.append assemblies
+            |> Seq.append additionalAssemblies
         
         let finalMapper = 
             allAssemblies
@@ -52,16 +63,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
         
         Builder<'TSource, 'TDestination>(finalMapper)
     
-    new() = 
-        let assemblies = 
-            [ Assembly.GetExecutingAssembly()
-              Assembly.GetEntryAssembly()
-              AssemblyHelper.GetWebEntryAssembly()
-              Assembly.GetCallingAssembly()
-              typeof<'TSource>.Assembly
-              typeof<'TDestination>.Assembly ]
-            |> Seq.filter (fun t -> t <> null)
-        Builder<'TSource, 'TDestination>(assemblies)
+    new() = Builder<'TSource, 'TDestination>([])
 
 [<Sealed>]
 type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (assemblies : seq<Assembly>) = 

@@ -1,6 +1,5 @@
 ﻿using System;
 using Caelan.Frameworks.Common.Classes;
-using Caelan.Frameworks.Common.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Caelan.Frameworks.Common.Tests
@@ -27,15 +26,9 @@ namespace Caelan.Frameworks.Common.Tests
 
 	class ABMapper : DefaultMapper<TestA, TestB>
 	{
-		public override void Map(TestA source, ref TestB destination, MapType mapType)
+		public override void Map(TestA source, ref TestB destination)
 		{
-			switch (mapType)
-			{
-				case MapType.NewObject:
-				case MapType.EditObject:
-					destination.A = source.A;
-					break;
-			}
+			destination.A = source.A + " mapper";
 		}
 	}
 
@@ -46,9 +39,7 @@ namespace Caelan.Frameworks.Common.Tests
 		public void TestAtoB()
 		{
 			var a = new TestA();
-			var b = Builder<TestA, TestB>.Create().Build(a);
-
-			Assert.AreEqual(b.A, "test");
+			var b = Builder.Source<TestA>().Destination<TestB>().Build(a);
 
 			Console.WriteLine(b.A);
 		}

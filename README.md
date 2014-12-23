@@ -1,9 +1,9 @@
-#Caelan.Frameworks.Common NuGet Package
+#Caelan.Frameworks.Common NuGet Package#
 
-##What is it?
+##What is it?##
 My Framework.Common package is an utility framework for delegating the object mapping to a specific class or simply for a password hasher class.
 
-###`Builder` and `IMapper<TSource, TDestination>`
+##`Builder` and `IMapper<TSource, TDestination>`##
 You can use `Builder` class for map a source to a destination or create a new object from the source like this:
 ```csharp
 var userDto = Builder.Source<User>().Destination<UserDTO>().Build(user); //user is a User instance
@@ -28,7 +28,8 @@ var mapper = new UserDTOMapper();
 //if the mapper has some custom property you can initialize them here
 var userDto = Builder.Source<User>().Destination<UserDTO>(mapper).Build(user); //user is a User instance
 ```
-###`IPasswordEncryptor`
+
+##`IPasswordEncryptor`##
 `IPasswordEncryptor` is a simple interface with one method:
 ```csharp
 string EncryptPassword(string password)

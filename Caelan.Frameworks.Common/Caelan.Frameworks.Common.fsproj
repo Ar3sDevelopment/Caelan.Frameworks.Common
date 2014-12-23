@@ -48,19 +48,24 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
-    <None Include="Script.fsx" />
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="IMapper.fs" />
-    <Compile Include="Helpers.fs" />
-    <Compile Include="Classes.fs" />
+    <None Include="Script.fsx" />
+    <Compile Include="Interfaces\IMapper.fs" />
+    <Compile Include="Interfaces\IPasswordEncryptor.fs" />
+    <Compile Include="Helpers\AssemblyHelper.fs" />
+    <Compile Include="Helpers\PasswordHelper.fs" />
+    <Compile Include="Classes\DefaultMapper.fs" />
+    <Compile Include="Classes\Builder.fs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="FSharp.Core, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
+    <Reference Include="System.Web" />
+    <Reference Include="FSharp.Core">
+      <HintPath>..\packages\FSharp.Core.3.1.2.1\lib\net40\FSharp.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

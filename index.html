@@ -1,48 +1,94 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-
     <title>Caelan Frameworks - Common by Ar3sDevelopment</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
-
   <body>
-
-    <header>
-      <div class="container">
+    <div class="wrapper">
+      <header>
         <h1>Caelan Frameworks - Common</h1>
-        <h2>Caelan.Frameworks.Common NuGet Package</h2>
+        <p>Caelan.Frameworks.Common NuGet Package</p>
 
-        <section id="downloads">
-          <a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
+        <p class="view"><a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common">View the Project on GitHub <small>Ar3sDevelopment/Caelan.Frameworks.Common</small></a></p>
 
-    <div class="container">
-      <section id="main_content">
+
+        <ul>
+          <li><a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
         <h1>
-<a name="caelanframeworkscommon-nuget-package" class="anchor" href="#caelanframeworkscommon-nuget-package"><span class="octicon octicon-link"></span></a>Caelan.Frameworks.Common NuGet Package</h1>
+<a id="caelanframeworkscommon-nuget-package" class="anchor" href="#caelanframeworkscommon-nuget-package" aria-hidden="true"><span class="octicon octicon-link"></span></a>Caelan.Frameworks.Common NuGet Package</h1>
 
 <h2>
-<a name="what-is-it" class="anchor" href="#what-is-it"><span class="octicon octicon-link"></span></a>What is it?</h2>
+<a id="what-is-it" class="anchor" href="#what-is-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is it?</h2>
 
-<p>My Framework.Common package is an utility framework for those projects who wants to separate DAL from BIZ or want to abstract code and doesn't want to create many objects for creating a DTO from an Entity or similar cases. It provides a BaseBuilder abstract classes that creates an object of type TDestination from a TSource. It uses AutoMapper, but I often need some more than a simple map so I've created a class that works fine with it. There's a PasswordHelper for creating hashed password in SHA512, simply provide a Salt and a DefaultPassword and you're done.</p>
+<p>My Framework.Common package is an utility framework for delegating the object mapping to a specific class or simply for a password hasher class.</p>
 
 <h2>
-<a name="why-use-it" class="anchor" href="#why-use-it"><span class="octicon octicon-link"></span></a>Why use it?</h2>
+<a id="builder-and-imappertsource-tdestination" class="anchor" href="#builder-and-imappertsource-tdestination" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>Builder</code> and <code>IMapper&lt;TSource, TDestination&gt;</code>
+</h2>
 
-<p>If you need to create object from other objects you can use the BaseBuilder and inherit from him to create your own builders with your customization or remove AutoMapper support.</p>
+<p>You can use <code>Builder</code> class for map a source to a destination or create a new object from the source like this:</p>
+
+<div class="highlight highlight-csharp"><pre><span class="pl-k">var</span> userDto = Builder.Source&lt;User&gt;().Destination&lt;UserDTO&gt;().Build(user); <span class="pl-c">//user is a User instance</span></pre></div>
+
+<p>But if a <code>IMapper&lt;User, UserDTO&gt;</code> implementation is missing it will build an empty <code>UserDTO</code>.
+<code>DefaultMapper&lt;TSource, TDestination&gt;</code> is an abstract class that prepare a simple <code>IMapper&lt;TSource, TDestination&gt;</code> implementation, you have only to define a body for <code>Map(TSource source, ref TDestination destination)</code> method, like this:</p>
+
+<div class="highlight highlight-csharp"><pre><span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">UserDTOMapper</span> : <span class="pl-st">DefaultMapper</span>&lt;<span class="pl-st">User</span>, <span class="pl-st">UserDTO</span>&gt;
+{
+  <span class="pl-s">public</span> <span class="pl-s">override</span> <span class="pl-st">void</span> <span class="pl-en">Map</span>(<span class="pl-st">User</span> <span class="pl-vpf">source</span>, <span class="pl-st">ref</span> <span class="pl-st">UserDTO</span> <span class="pl-vpf">destination</span>)
+  {
+    <span class="pl-c">//body here like</span>
+    <span class="pl-c">//destination.Member = source.Member;</span>
+    <span class="pl-c">//nothing to return</span>
+  }
+}</pre></div>
+
+<p>And you're done. <code>Builder</code> class searches for it in assemblies and use it without you have to do nothing more than the <code>Builder</code> syntax showed before.
+If <code>Builder</code> class can't find it or you have multiple mapper for same types you can specify the mapper like this:</p>
+
+<div class="highlight highlight-csharp"><pre><span class="pl-k">var</span> mapper = <span class="pl-s">new</span> UserDTOMapper();
+<span class="pl-c">//if the mapper has some custom property you can initialize them here</span>
+<span class="pl-k">var</span> userDto = Builder.Source&lt;User&gt;().Destination&lt;UserDTO&gt;(mapper).Build(user); <span class="pl-c">//user is a User instance</span></pre></div>
+
+<h2>
+<a id="ipasswordencryptor" class="anchor" href="#ipasswordencryptor" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>IPasswordEncryptor</code>
+</h2>
+
+<p><code>IPasswordEncryptor</code> is a simple interface with one method:</p>
+
+<div class="highlight highlight-csharp"><pre><span class="pl-st">string</span> EncryptPassword(<span class="pl-st">string</span> password)</pre></div>
+
+<p>And you can inherit from this for a custom password encryptor and reference it by the interface.
+I created a small <code>PasswordHelper</code> class that provides <em>SHA512</em> hashing with a custom salt.
+<code>PasswordHelper</code> is very simple, you can instantiate like this:</p>
+
+<div class="highlight highlight-csharp"><pre><span class="pl-s">const</span> <span class="pl-st">string</span> salt = <span class="pl-s1"><span class="pl-pds">"</span>Salty<span class="pl-pds">"</span></span>;
+<span class="pl-s">const</span> <span class="pl-st">string</span> <span class="pl-k">default</span> = <span class="pl-s1"><span class="pl-pds">"</span>Def4ult<span class="pl-pds">"</span></span>;
+<span class="pl-k">var</span> encryptor = <span class="pl-s">new</span> PasswordHelper(salt, <span class="pl-k">default</span>);
+<span class="pl-c">//and now you know how to encrypt</span>
+encryptor.EncryptPassword(<span class="pl-s1"><span class="pl-pds">"</span>123456789<span class="pl-pds">"</span></span>);</pre></div>
       </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/Ar3sDevelopment">Ar3sDevelopment</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
     </div>
-
+    <script src="javascripts/scale.fix.js"></script>
     
   </body>
 </html>

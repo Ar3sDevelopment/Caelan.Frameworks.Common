@@ -1,4 +1,6 @@
-#Caelan.Frameworks.Common NuGet Package#
+#Common Framework
+The Caelan.Frameworks.Common NuGet Package
+If you need support or you want to contact me I'm [CaelanIt](https://twitter.com/CaelanIt) on Twitter
 
 ##What is it?##
 My Framework.Common package is an utility framework for delegating the object mapping to a specific class or simply for a password hasher class.

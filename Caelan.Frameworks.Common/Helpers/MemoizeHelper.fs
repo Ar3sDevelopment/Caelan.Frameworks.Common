@@ -1,12 +1,23 @@
 ﻿namespace Caelan.Frameworks.Common.Helpers
 
 module MemoizeHelper = 
+    open System.Collections.Generic
+    
     let Memoize f = 
-        let cache = ref Map.empty
+        let cache = Dictionary<_, _>()
         fun x -> 
-            match (!cache).TryFind(x) with
-            | Some res -> res
-            | None -> 
+            let mutable ok = Unchecked.defaultof<_>
+            if cache.TryGetValue(x, &ok) then ok
+            else 
                 let res = f x
-                cache := (!cache).Add(x, res)
+                cache.[x] <- res
                 res
+//    let Memoize f = 
+//        let cache = ref Map.empty
+//        fun x -> 
+//            match (!cache).TryFind(x) with
+//            | Some res -> res
+//            | None -> 
+//                let res = f x
+//                cache := (!cache).Add(x, res)
+//                res

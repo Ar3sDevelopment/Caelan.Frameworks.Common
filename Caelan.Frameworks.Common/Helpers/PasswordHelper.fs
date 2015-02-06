@@ -9,7 +9,8 @@ type PasswordHelper(salt : string, defaultPassword : string, encryptor : IPasswo
     member this.GetDefaultPassword() = defaultPassword
     member this.GetDefaultPasswordEncrypted() = this.EncryptPassword(this.GetDefaultPassword())
     member this.EncryptPassword(password) = 
-        password |> MemoizeHelper.Memoize(fun p -> encryptor.EncryptPassword(this.GetSalt() + encryptor.EncryptPassword(p)))
+        (encryptor, password) 
+        |> MemoizeHelper.Memoize(fun (e, p) -> e.EncryptPassword(this.GetSalt() + e.EncryptPassword(p)))
     new(salt, defaultPassword) = 
         let encryptor = 
             { new IPasswordEncryptor with

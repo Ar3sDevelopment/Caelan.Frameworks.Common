@@ -6,7 +6,7 @@ open Caelan.Frameworks.Common.Interfaces
 open Caelan.Frameworks.Common.Helpers
 
 [<Sealed>]
-type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'TSource, 'TDestination>) = 
+type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct> private (mapper : IMapper<'TSource, 'TDestination>) = 
     static member internal Create() = Builder<'TSource, 'TDestination>.Create([ Assembly.GetCallingAssembly() ])
     static member internal Create(assemblies : seq<Assembly>) = Builder<'TSource, 'TDestination>(assemblies)
     static member internal Create(mapper : IMapper<'TSource, 'TDestination>) = Builder<'TSource, 'TDestination>(mapper)
@@ -63,7 +63,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
         
         Builder<'TSource, 'TDestination>(finalMapper)
     
-    new() = Builder<'TSource, 'TDestination>([])
+    private new() = Builder<'TSource, 'TDestination>([])
 
 [<Sealed>]
 type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (assemblies : seq<Assembly>) = 

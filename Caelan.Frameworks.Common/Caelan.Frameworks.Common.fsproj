@@ -52,6 +52,7 @@
     <None Include="Script.fsx" />
     <Compile Include="Interfaces\IMapper.fs" />
     <Compile Include="Interfaces\IPasswordEncryptor.fs" />
+    <Compile Include="Helpers\MemoizeHelper.fs" />
     <Compile Include="Helpers\AssemblyHelper.fs" />
     <Compile Include="Helpers\PasswordHelper.fs" />
     <Compile Include="Classes\DefaultMapper.fs" />

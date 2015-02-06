@@ -12,6 +12,7 @@ module MemoizeHelper =
                 let res = f x
                 cache.[x] <- res
                 res
+//requires comparable
 //    let Memoize f = 
 //        let cache = ref Map.empty
 //        fun x -> 

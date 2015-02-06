@@ -4,6 +4,7 @@ open System
 open System.Reflection
 open Caelan.Frameworks.Common.Interfaces
 open Caelan.Frameworks.Common.Helpers
+open Caelan.Frameworks.Common.Modules
 
 [<Sealed>]
 type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct> private (mapper : IMapper<'TSource, 'TDestination>) = 
@@ -20,46 +21,14 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
         async { return this.BuildList(sourceList) } |> Async.StartAsTask
     
     private new(assemblies : seq<Assembly>) = 
-        let findMapper (assembly : Assembly) = 
-            let baseMapper = typeof<IMapper<'TSource, 'TDestination>>
-            match assembly.GetTypes() 
-                  |> Seq.tryFind (fun t -> baseMapper.IsAssignableFrom(t) && not t.IsInterface && not t.IsAbstract) with
-            | Some(assemblyMapper) -> 
-                Some(Activator.CreateInstance(assemblyMapper) :?> IMapper<'TSource, 'TDestination>)
-            | None -> None
-        
-        let rec findMapperInAssemblies assemblies = 
-            match assemblies with
-            | head :: tail -> 
-                match head |> findMapper with
-                | Some(validMapper) -> validMapper
-                | None -> tail |> findMapperInAssemblies
-            | [] -> 
-                { new IMapper<'TSource, 'TDestination> with
-                      member __.Map(source : 'TSource) = 
-                          Activator.CreateInstance(typeof<'TDestination>) :?> 'TDestination
-                      member x.Map(source, destination : 'TDestination byref) = destination <- x.Map(source) }
-        
-        let additionalAssemblies = 
-            [ Assembly.GetExecutingAssembly()
-              Assembly.GetEntryAssembly()
-              AssemblyHelper.GetWebEntryAssembly()
-              Assembly.GetCallingAssembly()
-              typeof<'TSource>.Assembly
+        let objAssemblies =
+            [ typeof<'TSource>.Assembly
               typeof<'TDestination>.Assembly ]
-            |> Seq.filter (fun t -> t <> null)
-        
-        let allAssemblies = 
+
+        let finalMapper =
             assemblies
-            |> Seq.append additionalAssemblies
-            |> Seq.collect (fun t -> t.GetReferencedAssemblies() |> Seq.map (fun x -> Assembly.Load(x)))
-            |> Seq.append assemblies
-            |> Seq.append additionalAssemblies
-        
-        let finalMapper = 
-            allAssemblies
-            |> Seq.toList
-            |> findMapperInAssemblies
+            |> Seq.append objAssemblies
+            |> MapperReflection.GetMapper
         
         Builder<'TSource, 'TDestination>(finalMapper)
     

@@ -50,14 +50,16 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <None Include="Script.fsx" />
-    <Compile Include="Interfaces\IMapper.fs" />
-    <Compile Include="Interfaces\IPasswordEncryptor.fs" />
-    <Compile Include="Helpers\MemoizeHelper.fs" />
-    <Compile Include="Helpers\AssemblyHelper.fs" />
-    <Compile Include="Helpers\PasswordHelper.fs" />
-    <Compile Include="Classes\DefaultMapper.fs" />
-    <Compile Include="Classes\Builder.fs" />
     <None Include="packages.config" />
+    <Compile Include="IPasswordEncryptor.fs" />
+    <Compile Include="MemoizeHelper.fs" />
+    <Compile Include="AssemblyHelper.fs" />
+    <Compile Include="PasswordHelper.fs" />
+    <Compile Include="IMapper.fs">
+    </Compile>
+    <Compile Include="DefaultMapper.fs" />
+    <Compile Include="MapperReflection.fs" />
+    <Compile Include="Builder.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

@@ -11,21 +11,20 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     static member internal Create() = Builder<'TSource, 'TDestination>.Create([ Assembly.GetCallingAssembly() ])
     static member internal Create(assemblies : seq<Assembly>) = Builder<'TSource, 'TDestination>(assemblies)
     static member internal Create(mapper : IMapper<'TSource, 'TDestination>) = Builder<'TSource, 'TDestination>(mapper)
-    member __.Build(source : 'TSource) = mapper.Map(source)
-    member __.BuildList(source : 'TSource) = mapper.Map(source)
-    member this.BuildList(sourceList : seq<'TSource>) = sourceList |> Seq.map (fun source -> this.BuildList(source))
-    member __.Build(source : 'TSource, destination : 'TDestination byref) = mapper.Map(source, ref destination)
+    member __.Build(source) = mapper.Map(source)
+    member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
+    member __.Build(source, destination) = mapper.Map(source, ref destination)
     member this.BuildAsync(source) = async { return this.Build(source) } |> Async.StartAsTask
     member this.BuildAsync(source, destination) = async { return this.Build(source, destination) } |> Async.StartAsTask
-    member this.BuildListAsync(sourceList : seq<'TSource>) = 
+    member this.BuildListAsync(sourceList) = 
         async { return this.BuildList(sourceList) } |> Async.StartAsTask
     
-    private new(assemblies : seq<Assembly>) = 
+    private new(assemblies) = 
         let finalMapper =
             assemblies
             |> Seq.append [ typeof<'TSource>.Assembly
                             typeof<'TDestination>.Assembly ]
-            |> MapperReflection.GetMapper
+            |> MapperReflection<'TSource, 'TDestination>.GetMapper
         
         Builder<'TSource, 'TDestination>(finalMapper)
     
@@ -47,7 +46,7 @@ type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (
             |> Seq.filter (fun t -> t <> null)
         Builder<'T>(assemblies)
 
-[<Sealed>]
+[<Sealed; AbstractClass>]
 type Builder private () = 
     static member Source<'T when 'T : equality and 'T : null and 'T : not struct>() = 
         Builder<'T>([ Assembly.GetCallingAssembly() ])

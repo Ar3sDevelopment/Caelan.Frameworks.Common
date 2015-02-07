@@ -53,6 +53,7 @@
     <None Include="packages.config" />
     <Compile Include="IPasswordEncryptor.fs" />
     <Compile Include="MemoizeHelper.fs" />
+    <Compile Include="Extenders.fs" />
     <Compile Include="AssemblyHelper.fs" />
     <Compile Include="PasswordHelper.fs" />
     <Compile Include="IMapper.fs">

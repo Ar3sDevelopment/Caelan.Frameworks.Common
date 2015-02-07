@@ -5,12 +5,12 @@ open System.Text
 open Caelan.Frameworks.Common.Interfaces
 
 type PasswordHelper(salt : string, defaultPassword : string, encryptor : IPasswordEncryptor) = 
-    member this.GetSalt() = salt
-    member this.GetDefaultPassword() = defaultPassword
-    member this.GetDefaultPasswordEncrypted() = this.EncryptPassword(this.GetDefaultPassword())
+    member val Salt = salt with get
+    member val DefaultPassword = defaultPassword with get
+    member this.DefaultPasswordEncrypted with get() = this.EncryptPassword(this.DefaultPassword)
     member this.EncryptPassword(password) = 
         (encryptor, password) 
-        |> MemoizeHelper.Memoize(fun (e, p) -> e.EncryptPassword(this.GetSalt() + e.EncryptPassword(p)))
+        |> MemoizeHelper.Memoize(fun (e, p) -> e.EncryptPassword(this.Salt + e.EncryptPassword(p)))
     new(salt, defaultPassword) = 
         let encryptor = 
             { new IPasswordEncryptor with

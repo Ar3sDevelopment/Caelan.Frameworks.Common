@@ -21,13 +21,10 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
         async { return this.BuildList(sourceList) } |> Async.StartAsTask
     
     private new(assemblies : seq<Assembly>) = 
-        let objAssemblies =
-            [ typeof<'TSource>.Assembly
-              typeof<'TDestination>.Assembly ]
-
         let finalMapper =
             assemblies
-            |> Seq.append objAssemblies
+            |> Seq.append [ typeof<'TSource>.Assembly
+                            typeof<'TDestination>.Assembly ]
             |> MapperReflection.GetMapper
         
         Builder<'TSource, 'TDestination>(finalMapper)

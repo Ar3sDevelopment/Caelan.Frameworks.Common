@@ -13,7 +13,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     static member internal Create(mapper : IMapper<'TSource, 'TDestination>) = Builder<'TSource, 'TDestination>(mapper)
     member __.Build(source) = mapper.Map(source)
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
-    member __.Build(source, destination) = mapper.Map(source, destination)
+    member __.Build(source, destination : 'TDestination byref) = mapper.Map(source, ref destination)
     member this.BuildAsync(source) = async { return this.Build(source) } |> Async.StartAsTask
     member this.BuildAsync(source, destination) = async { return this.Build(source, destination) } |> Async.StartAsTask
     member this.BuildListAsync(sourceList) = 

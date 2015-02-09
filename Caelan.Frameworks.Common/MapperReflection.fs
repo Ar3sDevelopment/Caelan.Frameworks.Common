@@ -24,8 +24,8 @@ type internal MapperReflection<'TSource, 'TDestination when 'TSource : equality 
                 | None -> tail |> findMapperInAssemblies
             | [] -> 
                 { new IMapper<'TSource, 'TDestination> with
-                      member __.Map(source : 'TSource) = 
-                          Activator.CreateInstance<_>()
+                      member __.Map(source) = 
+                          Activator.CreateInstance<'TDestination>()
                       member x.Map(source, destination : 'TDestination byref) = destination <- x.Map(source) }
         
         let allAssemblies = 
@@ -36,7 +36,7 @@ type internal MapperReflection<'TSource, 'TDestination when 'TSource : equality 
                              Assembly.GetCallingAssembly() ])
             |> Seq.filter (fun t -> t <> null)
 
-        let refAssemblies = allAssemblies |> Seq.collect (fun t -> t.GetReferencedAssemblies() |> Seq.map (fun x -> Assembly.Load(x)))
+        let refAssemblies = allAssemblies |> Seq.toArray |> Array.Parallel.collect (fun t -> t.GetReferencedAssemblies() |> Array.Parallel.map (fun x -> Assembly.Load(x)))
         
         allAssemblies
         |> Seq.append refAssemblies

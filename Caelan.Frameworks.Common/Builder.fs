@@ -21,10 +21,14 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     private new(assemblies) = 
         let cb = ContainerBuilder()
         let mapperType = typeof<IMapper<'TSource, 'TDestination>>
-        cb.RegisterAssemblyTypes(assemblies |> Seq.toArray)
+        cb.RegisterAssemblyTypes(assemblies
+                                 |> Seq.filter (fun t -> t <> null)
+                                 |> Seq.distinct
+                                 |> Seq.toArray)
           .Where(fun t -> 
           not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition && mapperType.IsAssignableFrom(t))
-          .AsImplementedInterfaces() |> ignore
+          .AsImplementedInterfaces()
+        |> ignore
         let container = cb.Build()
         let finalMapper = 
             using (container.BeginLifetimeScope()) (fun scope -> container.Resolve<IMapper<'TSource, 'TDestination>>())
@@ -35,20 +39,12 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
 [<Sealed>]
 type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (assemblies : seq<Assembly>) = 
     member __.Destination<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
-        Builder<'T, 'TDestination>.Create(assemblies)
+        Builder<'T, 'TDestination>.Create(assemblies |> Seq.append [ typeof<'T>.Assembly ])
     member __.Destination<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = 
         Builder<'T, 'TDestination>.Create(mapper)
-    internal new() = 
-        let assemblies = 
-            [ Assembly.GetExecutingAssembly()
-              Assembly.GetEntryAssembly()
-              AssemblyHelper.GetWebEntryAssembly()
-              Assembly.GetCallingAssembly()
-              typeof<'T>.Assembly ]
-            |> Seq.filter (fun t -> t <> null)
-        Builder<'T>(assemblies)
 
 [<Sealed; AbstractClass>]
 type Builder private () = 
     static member Source<'T when 'T : equality and 'T : null and 'T : not struct>() = 
-        Builder<'T>([ Assembly.GetCallingAssembly() ])
+        Builder<'T>([ Assembly.GetCallingAssembly()
+                      typeof<'T>.Assembly ])

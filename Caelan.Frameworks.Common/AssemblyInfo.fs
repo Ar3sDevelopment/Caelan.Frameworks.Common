@@ -13,5 +13,5 @@ open System.Runtime.InteropServices
 [<AssemblyTrademark("")>]
 [<ComVisible(false)>]
 [<Guid("f339802d-371c-4ff1-929b-5c1f4a37381a")>]
-[<AssemblyVersion("2.2.3.*")>]
+[<AssemblyVersion("3.0.0.*")>]
 ()

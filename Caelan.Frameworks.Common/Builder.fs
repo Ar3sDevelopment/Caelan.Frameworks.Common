@@ -5,7 +5,6 @@ open System.Reflection
 open Autofac
 open Caelan.Frameworks.Common.Interfaces
 open Caelan.Frameworks.Common.Helpers
-open Caelan.Frameworks.Common.Modules
 
 [<Sealed>]
 type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'TSource, 'TDestination>) = 
@@ -17,16 +16,18 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     member __.Build(source, destination : 'TDestination byref) = mapper.Map(source, ref destination)
     member this.BuildAsync(source) = async { return this.Build(source) } |> Async.StartAsTask
     member this.BuildAsync(source, destination) = async { return this.Build(source, destination) } |> Async.StartAsTask
-    member this.BuildListAsync(sourceList) = 
-        async { return this.BuildList(sourceList) } |> Async.StartAsTask
+    member this.BuildListAsync(sourceList) = async { return this.BuildList(sourceList) } |> Async.StartAsTask
     
     private new(assemblies) = 
-        let finalMapper =
-            assemblies
-            |> Seq.append [ typeof<'TSource>.Assembly
-                            typeof<'TDestination>.Assembly ]
-            |> MapperReflection<'TSource, 'TDestination>.GetMapper
-        
+        let cb = ContainerBuilder()
+        let mapperType = typeof<IMapper<'TSource, 'TDestination>>
+        cb.RegisterAssemblyTypes(assemblies |> Seq.toArray)
+          .Where(fun t -> 
+          not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition && mapperType.IsAssignableFrom(t))
+          .AsImplementedInterfaces() |> ignore
+        let container = cb.Build()
+        let finalMapper = 
+            using (container.BeginLifetimeScope()) (fun scope -> container.Resolve<IMapper<'TSource, 'TDestination>>())
         Builder<'TSource, 'TDestination>(finalMapper)
     
     private new() = Builder<'TSource, 'TDestination>([])

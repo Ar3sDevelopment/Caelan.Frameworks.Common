@@ -4,7 +4,7 @@ using Caelan.Frameworks.Common.Classes;
 
 namespace Caelan.Frameworks.Common.NUnit
 {
-	[TestFixture ()]
+	[TestFixture]
 	public class Test
 	{
 		class TestA
@@ -35,7 +35,7 @@ namespace Caelan.Frameworks.Common.NUnit
 			}
 		}
 
-		[Test ()]
+		[Test]
 		public void TestBuilder ()
 		{
 			var a = new TestA();

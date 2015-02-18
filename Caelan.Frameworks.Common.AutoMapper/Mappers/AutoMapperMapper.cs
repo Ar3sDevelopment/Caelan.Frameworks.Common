@@ -25,5 +25,15 @@ namespace Caelan.Frameworks.Common.AutoMapper.Mappers
 			else
 				destination = Mapper.Map<TSource, TDestination>(source);
 		}
+
+		public TDestination Map(TSource source, TDestination destination)
+		{
+			if (destination != null)
+				destination = Mapper.Map(source, destination);
+			else
+				destination = Mapper.Map<TSource, TDestination>(source);
+
+			return destination;
+		}
 	}
 }

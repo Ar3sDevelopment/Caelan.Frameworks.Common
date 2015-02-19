@@ -58,6 +58,7 @@
     <Compile Include="PasswordHelper.fs" />
     <Compile Include="IMapper.fs">
     </Compile>
+    <Compile Include="MapEqualsAttribute.fs" />
     <Compile Include="MapFieldAttribute.fs" />
     <Compile Include="DefaultMapper.fs" />
     <Compile Include="Builder.fs" />

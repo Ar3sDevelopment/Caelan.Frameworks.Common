@@ -9,6 +9,7 @@ namespace Caelan.Frameworks.Common.NUnit
 	[TestFixture]
 	public class Test
 	{
+		[MapEquals]
 		class TestA
 		{
 			public TestA()
@@ -16,13 +17,14 @@ namespace Caelan.Frameworks.Common.NUnit
 				A = "test";
 			}
 
-			[MapField("A")]
+			[MapField("B")]
 			public string A { get; set; }
 		}
 
 		class TestB
 		{
 			public string A { get; set; }
+			public string B { get; set; }
 		}
 
 		class ABMapper : DefaultMapper<TestA, TestB>
@@ -30,7 +32,7 @@ namespace Caelan.Frameworks.Common.NUnit
 			public override void Map(TestA source, ref TestB destination)
 			{
 				base.Map(source, ref destination);
-				destination.A += " mapper";
+				destination.B += " mapper";
 			}
 		}
 
@@ -39,12 +41,16 @@ namespace Caelan.Frameworks.Common.NUnit
 		{
 			var stopWatch = new Stopwatch();
 			stopWatch.Start();
+
 			var a = new TestA();
 			var b = new TestB
 			{
-				A = a.A + " no mapper"
+				A = a.A,
+				B = a.A + " no mapper"
 			};
-			Console.WriteLine(b.A);
+
+			Console.WriteLine("A: " + b.A + " B: " + b.B);
+
 			stopWatch.Stop();
 			Console.WriteLine("{0} ms", stopWatch.ElapsedMilliseconds);
 		}
@@ -54,10 +60,12 @@ namespace Caelan.Frameworks.Common.NUnit
 		{
 			var stopWatch = new Stopwatch();
 			stopWatch.Start();
+
 			var a = new TestA();
 			var b = Builder.Source<TestA>().Destination<TestB>().Build(a);
 
-			Console.WriteLine(b.A);
+			Console.WriteLine("A: " + b.A + " B: " + b.B);
+
 			stopWatch.Stop();
 			Console.WriteLine("{0} ms", stopWatch.ElapsedMilliseconds);
 		}

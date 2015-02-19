@@ -25,6 +25,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     private new(assemblies) = 
         let cb = ContainerBuilder()
         let mapperType = typeof<IMapper<'TSource, 'TDestination>>
+        cb.RegisterGeneric(typedefof<DefaultMapper<'TSource, 'TDestination>>).As(typedefof<IMapper<'TSource, 'TDestination>>) |> ignore
         cb.RegisterAssemblyTypes(assemblies
                                  |> Seq.filter (fun t -> t <> null)
                                  |> Seq.distinct
@@ -33,7 +34,6 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
           not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition && mapperType.IsAssignableFrom(t))
           .AsImplementedInterfaces()
         |> ignore
-        cb.RegisterType<DefaultMapper<'TSource, 'TDestination>>().As<IMapper<'TSource, 'TDestination>>().PreserveExistingDefaults() |> ignore
         let container = cb.Build()
         let finalMapper = using (container.BeginLifetimeScope()) (fun scope -> container.Resolve<IMapper<'TSource, 'TDestination>>())
         Builder<'TSource, 'TDestination>(finalMapper)

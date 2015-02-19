@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>Caelan.Frameworks.Common</id>
-        <version>2.2.17</version>
+        <version>3.0.0</version>
         <title>Caelan.Frameworks.Common</title>
         <authors>Caelan</authors>
         <owners>Matteo Bruni</owners>

@@ -17,27 +17,29 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
     override this.Map (source : 'TSource, destination : 'TDestination byref) =
         let d = ref destination
         match source.GetType() with
-        | sourceType when sourceType.GetCustomAttributes(typeof<MapEqualsAttribute>, true) |> Seq.length > 0 ->
+        | sourceType when sourceType.GetCustomAttributes(typeof<MapEqualsAttribute>, true) |> Array.length > 0 ->
             sourceType.GetProperties()
-            |> Seq.filter (fun t ->  d.Value.GetType().GetProperty(t.Name) <> null)
-            |> Seq.iter (fun t -> d.Value.GetType().GetProperty(t.Name).SetValue(d.Value, t.GetValue(source)))
+            |> Array.filter (fun t ->  d.Value.GetType().GetProperty(t.Name) <> null)
+            |> Array.Parallel.iter (fun t -> d.Value.GetType().GetProperty(t.Name).SetValue(d.Value, t.GetValue(source)))
         | sourceType -> 
             let customProperties =
                 sourceType.GetProperties()
-                |> Seq.filter (fun t -> t.CustomAttributes |> Seq.length > 0)
+                |> Array.filter (fun t -> t.CustomAttributes |> Seq.length > 0)
             customProperties
-            |> Seq.map (fun t -> (t, match Attribute.GetCustomAttribute(t,typeof<MapEqualsAttribute>) with
-                                     | null -> null
-                                     | attribute -> attribute :?> MapEqualsAttribute))
-            |> Seq.iter (fun (t, a) ->
+            |> Array.Parallel.map (fun t ->
+                (t, match Attribute.GetCustomAttribute(t,typeof<MapEqualsAttribute>) with
+                    | null -> null
+                    | attribute -> attribute :?> MapEqualsAttribute))
+            |> Array.Parallel.iter (fun (t, a) ->
                 match a with
                 | null -> ()
                 | _ -> d.Value.GetType().GetProperty(t.Name).SetValue(d.Value, t.GetValue(source)))
             customProperties
-            |> Seq.map (fun t -> (t, match Attribute.GetCustomAttribute(t,typeof<MapFieldAttribute>) with
-                                     | null -> null
-                                     | attribute -> attribute :?> MapFieldAttribute))
-            |> Seq.iter (fun (t, a) ->
+            |> Array.Parallel.map (fun t ->
+                (t, match Attribute.GetCustomAttribute(t,typeof<MapFieldAttribute>) with
+                    | null -> null
+                    | attribute -> attribute :?> MapFieldAttribute))
+            |> Array.Parallel.iter (fun (t, a) ->
                 match a with
                 | null -> ()
                 | _ ->
@@ -51,8 +53,6 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
         destination
     override this.Map source = 
         match source with
-        | null -> Unchecked.defaultof<_>
+        | null -> Unchecked.defaultof<'TDestination>
         | _ -> 
-            let destination = Activator.CreateInstance<_>()
-            this.Map(source, ref destination)
-            destination
+            this.Map(source, Activator.CreateInstance<'TDestination>())

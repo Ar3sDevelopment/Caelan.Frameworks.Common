@@ -12,7 +12,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     static member internal Create(assemblies : seq<Assembly>) = Builder<'TSource, 'TDestination>(assemblies)
     static member internal Create(mapper : IMapper<'TSource, 'TDestination>) = Builder<'TSource, 'TDestination>(mapper)
     member __.Build(source) = mapper.Map(source)
-    member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
+    member this.BuildList(sourceList) = sourceList |> Seq.toArray |> Array.Parallel.map (fun source -> this.Build(source))
     member __.Build(source, destination : 'TDestination byref) = mapper.Map(source, ref destination)
     member __.Build(source, destination : 'TDestination) = mapper.Map(source, destination)
     member this.BuildAsync(source) = async { return this.Build(source) } |> Async.StartAsTask

@@ -1,6 +1,10 @@
 ﻿<Properties StartupItem="Caelan.Frameworks.Common/Caelan.Frameworks.Common.fsproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Caelan.Frameworks.Common/Caelan.Frameworks.Common.nuspec">
+    <Files>
+      <File FileName="Caelan.Frameworks.Common/Caelan.Frameworks.Common.nuspec" Line="11" Column="11" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

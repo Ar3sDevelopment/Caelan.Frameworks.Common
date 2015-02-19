@@ -1,5 +1,4 @@
 ﻿namespace Caelan.Frameworks.Common.Classes
-
 open System
 open Caelan.Frameworks.Common.Attributes
 open Caelan.Frameworks.Common.Interfaces

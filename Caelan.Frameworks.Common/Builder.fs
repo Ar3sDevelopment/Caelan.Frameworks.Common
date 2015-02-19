@@ -14,8 +14,12 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     member __.Build(source) = mapper.Map(source)
     member this.BuildList(sourceList) = sourceList |> Seq.map (fun source -> this.Build(source))
     member __.Build(source, destination : 'TDestination byref) = mapper.Map(source, ref destination)
+    member __.Build(source, destination : 'TDestination) = mapper.Map(source, destination)
     member this.BuildAsync(source) = async { return this.Build(source) } |> Async.StartAsTask
-    member this.BuildAsync(source, destination) = async { return this.Build(source, destination) } |> Async.StartAsTask
+    member this.BuildAsync(source, destination : 'TDestination byref) =
+        let d = ref destination
+        async { return this.Build(source, ref d.Value) } |> Async.StartAsTask
+    member this.BuildAsync(source, destination : 'TDestination) = async { return this.Build(source, destination) } |> Async.StartAsTask
     member this.BuildListAsync(sourceList) = async { return this.BuildList(sourceList) } |> Async.StartAsTask
     
     private new(assemblies) = 
@@ -29,6 +33,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
           not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition && mapperType.IsAssignableFrom(t))
           .AsImplementedInterfaces()
         |> ignore
+        cb.RegisterType<DefaultMapper<'TSource, 'TDestination>>().As<IMapper<'TSource, 'TDestination>>().PreserveExistingDefaults() |> ignore
         let container = cb.Build()
         let finalMapper = 
             using (container.BeginLifetimeScope()) (fun scope -> container.Resolve<IMapper<'TSource, 'TDestination>>())
@@ -47,4 +52,5 @@ type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (
 type Builder private () = 
     static member Source<'T when 'T : equality and 'T : null and 'T : not struct>() = 
         Builder<'T>([ Assembly.GetCallingAssembly()
+                      Assembly.GetExecutingAssembly()
                       typeof<'T>.Assembly ])

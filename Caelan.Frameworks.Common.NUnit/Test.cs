@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using Caelan.Frameworks.Common.Classes;
+using Caelan.Frameworks.Common.Attributes;
 
 namespace Caelan.Frameworks.Common.NUnit
 {
@@ -15,16 +16,12 @@ namespace Caelan.Frameworks.Common.NUnit
 				A = "test";
 			}
 
+			[MapField("A")]
 			public string A { get; set; }
 		}
 
 		class TestB
 		{
-			public TestB()
-			{
-				A = "test2";
-			}
-
 			public string A { get; set; }
 		}
 
@@ -32,7 +29,8 @@ namespace Caelan.Frameworks.Common.NUnit
 		{
 			public override void Map(TestA source, ref TestB destination)
 			{
-				destination.A = source.A + " mapper";
+				base.Map(source, ref destination);
+				destination.A += " mapper";
 			}
 		}
 

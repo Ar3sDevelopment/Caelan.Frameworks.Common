@@ -62,6 +62,7 @@
     <Compile Include="MapFieldAttribute.fs" />
     <Compile Include="DefaultMapper.fs" />
     <Compile Include="Builder.fs" />
+    <None Include="Caelan.Frameworks.Common.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Autofac">

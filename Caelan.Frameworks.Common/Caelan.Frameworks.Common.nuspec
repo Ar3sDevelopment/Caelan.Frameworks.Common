@@ -17,6 +17,6 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="lib\Caelan.Frameworks.Common.dll" target="lib\Caelan.Frameworks.Common.dll" />
+        <file src="bin\Release\Caelan.Frameworks.Common.dll" target="lib\Caelan.Frameworks.Common.dll" />
     </files>
 </package>

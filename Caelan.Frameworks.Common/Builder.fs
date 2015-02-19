@@ -35,8 +35,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
         |> ignore
         cb.RegisterType<DefaultMapper<'TSource, 'TDestination>>().As<IMapper<'TSource, 'TDestination>>().PreserveExistingDefaults() |> ignore
         let container = cb.Build()
-        let finalMapper = 
-            using (container.BeginLifetimeScope()) (fun scope -> container.Resolve<IMapper<'TSource, 'TDestination>>())
+        let finalMapper = using (container.BeginLifetimeScope()) (fun scope -> container.Resolve<IMapper<'TSource, 'TDestination>>())
         Builder<'TSource, 'TDestination>(finalMapper)
     
     private new() = Builder<'TSource, 'TDestination>([])

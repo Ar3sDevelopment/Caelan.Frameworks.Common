@@ -1,11 +1,11 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupItem="Caelan.Frameworks.Common/Caelan.Frameworks.Common.fsproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Caelan.Frameworks.Common/DefaultMapper.fs">
+  <MonoDevelop.Ide.Workbench>
     <Files>
       <File FileName="Caelan.Frameworks.Common/IMapper.fs" Line="1" Column="1" />
       <File FileName="Caelan.Frameworks.Common/PasswordHelper.fs" Line="1" Column="1" />
-      <File FileName="Caelan.Frameworks.Common/DefaultMapper.fs" Line="43" Column="43" />
-      <File FileName="Caelan.Frameworks.Common/Builder.fs" Line="21" Column="21" />
+      <File FileName="Caelan.Frameworks.Common/DefaultMapper.fs" Line="29" Column="29" />
+      <File FileName="Caelan.Frameworks.Common/Builder.fs" Line="27" Column="27" />
       <File FileName="Caelan.Frameworks.Common/MemoizeHelper.fs" Line="1" Column="1" />
       <File FileName="Caelan.Frameworks.Common/AssemblyHelper.fs" Line="1" Column="1" />
       <File FileName="Caelan.Frameworks.Common/IPasswordEncryptor.fs" Line="1" Column="1" />
@@ -13,13 +13,8 @@
       <File FileName="Caelan.Frameworks.Common.AutoMapper/Mappers/AutoMapperMapper.cs" Line="1" Column="1" />
       <File FileName="Caelan.Frameworks.Common.NUnit/Test.cs" Line="1" Column="1" />
       <File FileName="Caelan.Frameworks.Common/MapFieldAttribute.fs" Line="1" Column="1" />
-      <File FileName="Caelan.Frameworks.Common/MapEqualsAttribute.fs" Line="8" Column="8" />
+      <File FileName="Caelan.Frameworks.Common/MapEqualsAttribute.fs" Line="1" Column="1" />
     </Files>
-    <Pads>
-      <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State expanded="True" selected="True" />
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

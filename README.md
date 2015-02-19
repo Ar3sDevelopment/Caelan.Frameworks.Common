@@ -1,4 +1,4 @@
-#Common Framework
+#Common Framework [![Build status](https://ci.appveyor.com/api/projects/status/0wi8iemmxy4xu986?svg=true)](https://ci.appveyor.com/project/Ar3s/caelan-frameworks-common)
 The Caelan.Frameworks.Common NuGet Package
 If you need support or you want to contact me I'm [CaelanIt](https://twitter.com/CaelanIt) on Twitter
 

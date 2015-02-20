@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <title>Caelan.Frameworks.Common</title>
+        <authors>$author$</authors>
+        <owners>Matteo Bruni</owners>
+        <description>$description$</description>
+        <releaseNotes></releaseNotes>
+        <summary>$description$</summary>
+        <language>en-US</language>
+        <projectUrl>https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <tags>caelan frameworks builder common automapperextender passwordhelper</tags>
+        <dependencies>
+            <group targetFramework=".NETFramework4.5">
+                <dependency id="FSharp.Core" version="3.1.2.1" />
+            </group>
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="bin\$configuration$\$id$.dll" target="lib\$id$.dll" />
+    </files>
+</package>

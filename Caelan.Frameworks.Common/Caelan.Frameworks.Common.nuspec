@@ -1,14 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
-        <id>Caelan.Frameworks.Common</id>
-        <version>3.0.0</version>
+        <id>$id$</id>
+        <version>$version$</version>
         <title>Caelan.Frameworks.Common</title>
-        <authors>Caelan</authors>
+        <authors>$author$</authors>
         <owners>Matteo Bruni</owners>
+        <description>$description$</description>
+        <releaseNotes></releaseNotes>
+        <summary>$description$</summary>
+        <language>en-US</language>
         <projectUrl>https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Common framework for DAL and BIZ packages</description>
         <tags>caelan frameworks builder common automapperextender passwordhelper</tags>
         <dependencies>
             <group targetFramework=".NETFramework4.5">
@@ -17,6 +20,6 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="bin\Release\Caelan.Frameworks.Common.dll" target="lib\Caelan.Frameworks.Common.dll" />
+        <file src="bin\$configuration$\$id$.dll" target="lib\$id$.dll" />
     </files>
 </package>

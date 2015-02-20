@@ -5,7 +5,7 @@ open System.Runtime.CompilerServices
 open System.Runtime.InteropServices
 
 [<AssemblyTitle("Caelan.Frameworks.Common")>]
-[<AssemblyDescription("Common Framework")>]
+[<AssemblyDescription("Common framework for DAL and BIZ packages")>]
 [<AssemblyConfiguration("")>]
 [<AssemblyCompany("Caelan")>]
 [<AssemblyProduct("Caelan.Frameworks.Common")>]

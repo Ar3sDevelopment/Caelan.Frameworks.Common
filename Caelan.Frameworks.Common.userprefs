@@ -1,15 +1,15 @@
 ﻿<Properties StartupItem="Caelan.Frameworks.Common/Caelan.Frameworks.Common.fsproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Caelan.Frameworks.Common/PasswordHelper.fs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Caelan.Frameworks.Common/Builder.fs">
     <Files>
-      <File FileName="Caelan.Frameworks.Common/Caelan.Frameworks.Common.nuspec" Line="21" Column="21" />
-      <File FileName="Caelan.Frameworks.Common/Builder.fs" Line="8" Column="8" />
+      <File FileName="Caelan.Frameworks.Common/Caelan.Frameworks.Common.nuspec" Line="1" Column="1" />
+      <File FileName="Caelan.Frameworks.Common/Builder.fs" Line="45" Column="45" />
       <File FileName="Caelan.Frameworks.Common.NUnit/Test.cs" Line="1" Column="1" />
       <File FileName="Caelan.Frameworks.Common/DefaultMapper.fs" Line="1" Column="1" />
       <File FileName="Caelan.Frameworks.Common/MapEqualsAttribute.fs" Line="1" Column="1" />
-      <File FileName="Caelan.Frameworks.Common/AssemblyInfo.fs" Line="65" Column="65" />
-      <File FileName="Caelan.Frameworks.Common/MemoizeHelper.fs" Line="9" Column="9" />
-      <File FileName="Caelan.Frameworks.Common/PasswordHelper.fs" Line="39" Column="39" />
+      <File FileName="Caelan.Frameworks.Common/AssemblyInfo.fs" Line="1" Column="1" />
+      <File FileName="Caelan.Frameworks.Common/MemoizeHelper.fs" Line="1" Column="1" />
+      <File FileName="Caelan.Frameworks.Common/PasswordHelper.fs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

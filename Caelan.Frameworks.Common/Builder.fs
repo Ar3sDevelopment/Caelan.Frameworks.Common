@@ -8,7 +8,7 @@ open Caelan.Frameworks.Common.Helpers
 
 [<Sealed>]
 type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'TSource, 'TDestination>) = 
-    static member internal Create() = Builder<'TSource, 'TDestination>.Create([ Assembly.GetCallingAssembly() ])
+    static member internal Create() = Builder<'TSource, 'TDestination>.Create(Seq.singleton(Assembly.GetCallingAssembly()))
     static member internal Create(assemblies : seq<Assembly>) = Builder<'TSource, 'TDestination>(assemblies)
     static member internal Create(mapper : IMapper<'TSource, 'TDestination>) = Builder<'TSource, 'TDestination>(mapper)
     member __.Build(source) = mapper.Map(source)
@@ -43,7 +43,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
 [<Sealed>]
 type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (assemblies : seq<Assembly>) = 
     member __.Destination<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
-        Builder<'T, 'TDestination>.Create(assemblies |> Seq.append [ typeof<'T>.Assembly ])
+        Builder<'T, 'TDestination>.Create(assemblies |> Seq.append(Seq.singleton typeof<'T>.Assembly))
     member __.Destination<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = 
         Builder<'T, 'TDestination>.Create(mapper)
 
@@ -52,4 +52,6 @@ type Builder private () =
     static member Source<'T when 'T : equality and 'T : null and 'T : not struct>() = 
         Builder<'T>([ Assembly.GetCallingAssembly()
                       Assembly.GetExecutingAssembly()
+                      Assembly.GetEntryAssembly()
+                      AssemblyHelper.GetWebEntryAssembly()
                       typeof<'T>.Assembly ])

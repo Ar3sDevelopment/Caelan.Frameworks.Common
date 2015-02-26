@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Diagnostics;
-using Caelan.Frameworks.Common.Helpers;
+using Caelan.Frameworks.Common.Classes;
 using System.Runtime.CompilerServices;
 
 namespace Caelan.Frameworks.Common.NUnit
@@ -9,7 +9,7 @@ namespace Caelan.Frameworks.Common.NUnit
 	[TestFixture]
 	public class PasswordTest
 	{
-		public class PasswordManager : PasswordHelper
+		public class PasswordManager : PasswordHasher
 		{
 			public PasswordManager() : base("salt", "default")
 			{
@@ -21,7 +21,7 @@ namespace Caelan.Frameworks.Common.NUnit
 		{
 			var pwd = new PasswordManager();
 
-			Console.WriteLine(pwd.EncryptPassword("password"));
+			Console.WriteLine(pwd.HashPassword("password"));
 		}
 	}
 }

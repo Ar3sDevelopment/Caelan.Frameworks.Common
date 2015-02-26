@@ -1,5 +1,6 @@
 ﻿namespace Caelan.Frameworks.Common.Helpers
 
+[<AutoOpen>]
 module MemoizeHelper = 
     open System.Collections.Generic
     

@@ -62,7 +62,7 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
 [<Sealed>]
 type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (assemblies : seq<Assembly>) = 
     member __.Destination<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
-        Builder<'T, 'TDestination>.Create(assemblies |> Seq.append (Seq.singleton typeof<'T>.Assembly))
+        Builder<'T, 'TDestination>.Create(assemblies |> Seq.append (Seq.singleton typeof<'TDestination>.Assembly))
     member __.Destination<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = 
         Builder<'T, 'TDestination>.Create(mapper)
 

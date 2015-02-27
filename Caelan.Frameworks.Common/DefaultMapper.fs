@@ -3,19 +3,22 @@ open System
 open Caelan.Frameworks.Common.Attributes
 open Caelan.Frameworks.Common.Interfaces
 
-type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
+type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(source) = 
+    let mutable mutableSource = source
     interface IMapper<'TSource, 'TDestination> with
-        member this.Map(source, destination: 'TDestination byref) = this.Map(source, ref destination)
-        member this.Map(source) = this.Map(source)
-        member this.Map (source, destination: 'TDestination) = this.Map(source, destination)
+        member __.Source
+            with set(v) = mutableSource <- v
+        member this.Map(destination: 'TDestination byref) = this.Map(ref destination)
+        member this.Map() = this.Map()
+        member this.Map (destination: 'TDestination) = this.Map(destination)
 
-    abstract Map : source:'TSource * destination:'TDestination byref -> unit
-    abstract Map : source:'TSource * destination:'TDestination -> 'TDestination
-    abstract Map : source:'TSource -> 'TDestination
+    abstract Map : destination:'TDestination byref -> unit
+    abstract Map : destination:'TDestination -> 'TDestination
+    abstract Map : unit -> 'TDestination
 
-    override this.Map (source : 'TSource, destination : 'TDestination byref) =
+    override this.Map (destination : 'TDestination byref) =
         let d = ref destination
-        let sourceType = source.GetType()
+        let sourceType = mutableSource.GetType()
         let customProperties =
             sourceType.GetProperties()
             |> Array.filter (fun t -> t.CustomAttributes |> Seq.length > 0)
@@ -26,7 +29,7 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
             |> Array.Parallel.iter (fun t ->
                 match d.Value.GetType().GetProperty(t.Name) with
                 | null -> ()
-                | property -> property.SetValue(d.Value, t.GetValue(source)))
+                | property -> property.SetValue(d.Value, t.GetValue(mutableSource)))
         | _ -> 
             customProperties
             |> Array.Parallel.map (fun t ->
@@ -36,7 +39,7 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
             |> Array.Parallel.iter (fun (t, a) ->
                 match a with
                 | null -> ()
-                | _ -> d.Value.GetType().GetProperty(t.Name).SetValue(d.Value, t.GetValue(source)))
+                | _ -> d.Value.GetType().GetProperty(t.Name).SetValue(d.Value, t.GetValue(mutableSource)))
 
         customProperties
         |> Array.Parallel.map (fun t ->
@@ -49,14 +52,14 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
             | _ ->
                 match d.Value.GetType().GetProperty(a.ToField) with
                 | null -> ()
-                | property -> property.SetValue(d.Value, t.GetValue(source)))
+                | property -> property.SetValue(d.Value, t.GetValue(mutableSource)))
 
-    override this.Map (source, destination : 'TDestination) =
+    override this.Map (destination : 'TDestination) =
         let newDest = destination
-        this.Map(source, ref destination)
+        this.Map(ref destination)
         destination
-    override this.Map source = 
-        match source with
+    override this.Map() = 
+        match mutableSource with
         | null -> Unchecked.defaultof<'TDestination>
         | _ -> 
-            this.Map(source, Activator.CreateInstance<'TDestination>())
+            this.Map(Activator.CreateInstance<'TDestination>())

@@ -6,6 +6,7 @@ open Caelan.Frameworks.Common.Classes
 open Caelan.Frameworks.Common.Attributes
 
 [<MapEquals>]
+[<AllowNullLiteral>]
 type TestA() =
     member val A = "" with get, set
 
@@ -13,11 +14,19 @@ type TestA() =
     member val C = "" with get, set
 
 [<MapEquals>]
+[<AllowNullLiteral>]
 type TestB() =
     member val A = "" with get, set
 
     [<MapField("C")>]
     member val B = "" with get, set
+
+type ABMapper(source) =
+    inherit DefaultMapper<TestA, TestB>(source)
+
+    override __.Map(dest: TestB byref) =
+        base.Map(ref dest)
+        dest.B <- dest.B + " mapper"
 
 [<TestFixture>]
 type BuilderTest() = 
@@ -25,5 +34,46 @@ type BuilderTest() =
     member __.TestNoBuilder() =
         let stopwatch = Stopwatch()
         stopwatch.Start()
+
+        let a = TestA(A = "test", C = "test")
+        let b = TestB(A = "test", B = a.C + " no mapper")
+        let str = "A: " + b.A + " B: " + b.B
+
+        Assert.AreEqual(str, "A: test B: test no mapper")
+
+        str |> printfn "%s"
+
+        stopwatch.Stop()
+        stopwatch.ElapsedMilliseconds |> printfn "%dms"
+
+    [<Test>]
+    member __.TestBuilder() =
+        let stopwatch = Stopwatch()
+        stopwatch.Start()
+
+        let a = TestA(A = "test", C = "test")
+        let b = Builder.Build(a).To<TestB>().Build()
+        let str = "A: " + b.A + " B: " + b.B
+
+        Assert.AreEqual(str, "A: test B: test mapper")
+
+        str |> printfn "%s"
+
+        stopwatch.Stop()
+        stopwatch.ElapsedMilliseconds |> printfn "%dms"
+
+    [<Test>]
+    member __.TestDefaultMapper() =
+        let stopwatch = Stopwatch()
+        stopwatch.Start()
+
+        let b = TestB(A = "test", B = "test2")
+        let a = Builder.Build(b).To<TestA>().Build()
+        let str = "A: " + a.A + " C: " + a.C
+
+        Assert.AreEqual (str, "A: test C: test2")
+
+        str |> printfn "%s"
+
         stopwatch.Stop()
         stopwatch.ElapsedMilliseconds |> printfn "%dms"

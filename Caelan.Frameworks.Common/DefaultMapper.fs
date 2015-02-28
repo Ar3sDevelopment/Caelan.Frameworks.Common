@@ -8,15 +8,13 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
     interface IMapper<'TSource, 'TDestination> with
         member __.Source
             with set(v) = mutableSource <- v
-        member this.Map(destination: 'TDestination byref) = this.Map(ref destination)
         member this.Map() = this.Map()
         member this.Map (destination: 'TDestination) = this.Map(destination)
 
-    abstract Map : destination:'TDestination byref -> unit
-    abstract Map : destination:'TDestination -> 'TDestination
+    abstract Map : destination:'TDestination -> unit
     abstract Map : unit -> 'TDestination
 
-    override this.Map (destination : 'TDestination byref) =
+    override this.Map (destination : 'TDestination) =
         let d = ref destination
         let sourceType = mutableSource.GetType()
         let customProperties =
@@ -54,12 +52,10 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
                 | null -> ()
                 | property -> property.SetValue(d.Value, t.GetValue(mutableSource)))
 
-    override this.Map (destination : 'TDestination) =
-        let newDest = destination
-        this.Map(ref destination)
-        destination
     override this.Map() = 
         match mutableSource with
         | null -> Unchecked.defaultof<'TDestination>
         | _ -> 
-            this.Map(Activator.CreateInstance<'TDestination>())
+            let dest = Activator.CreateInstance<'TDestination>()
+            this.Map(dest)
+            dest

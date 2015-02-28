@@ -24,8 +24,8 @@ type TestB() =
 type ABMapper(source) =
     inherit DefaultMapper<TestA, TestB>(source)
 
-    override __.Map(dest: TestB byref) =
-        base.Map(ref dest)
+    override __.Map(dest) =
+        base.Map(dest)
         dest.B <- dest.B + " mapper"
 
 [<TestFixture>]
@@ -52,7 +52,7 @@ type BuilderTest() =
         stopwatch.Start()
 
         let a = TestA(A = "test", C = "test")
-        let b = Builder.Build(a).To<TestB>().Build()
+        let b = Builder.Build(a).To<TestB>()
         let str = "A: " + b.A + " B: " + b.B
 
         Assert.AreEqual(str, "A: test B: test mapper")
@@ -68,7 +68,7 @@ type BuilderTest() =
         stopwatch.Start()
 
         let b = TestB(A = "test", B = "test2")
-        let a = Builder.Build(b).To<TestA>().Build()
+        let a = Builder.Build(b).To<TestA>()
         let str = "A: " + a.A + " C: " + a.C
 
         Assert.AreEqual (str, "A: test C: test2")

@@ -7,18 +7,8 @@ open Caelan.Frameworks.Common.Interfaces
 open Caelan.Frameworks.Common.Helpers
 
 [<Sealed>]
-type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(source : 'TSource, mapper : IMapper<'TSource, 'TDestination>) = 
-    static member internal Create(source) = 
-        Builder<'TSource, 'TDestination>.Create(source, Seq.singleton (Assembly.GetCallingAssembly()))
-    static member internal Create(source : 'TSource, assemblies : seq<Assembly>) = Builder<'TSource, 'TDestination>(source, assemblies)
-    static member internal Create(source : 'TSource, mapper : IMapper<'TSource, 'TDestination>) = Builder<'TSource, 'TDestination>(source, mapper)
+type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct> internal (source : 'TSource, mapper : IMapper<'TSource, 'TDestination>) = 
     member __.Build() = mapper.Map()
-    
-    member this.BuildList(sourceList) = 
-        sourceList
-        |> Seq.toArray
-        |> Array.Parallel.map (fun source -> this.Build())
-        |> Seq.ofArray
     
     member __.Build(source, destination : 'TDestination byref) = mapper.Map(ref destination)
     member __.Build(source, destination : 'TDestination) = mapper.Map(destination)
@@ -30,9 +20,8 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
     
     member this.BuildAsync(source, destination : 'TDestination) = 
         async { return this.Build(source, destination) } |> Async.StartAsTask
-    member this.BuildListAsync(sourceList) = async { return this.BuildList(sourceList) } |> Async.StartAsTask
     
-    private new(source : 'TSource, assemblies) = 
+    internal new(source : 'TSource, assemblies : seq<Assembly>) = 
         let cb = ContainerBuilder()
         let mapperType = typeof<IMapper<'TSource, 'TDestination>>
         cb.RegisterGeneric(typedefof<DefaultMapper<'TSource, 'TDestination>>)
@@ -57,14 +46,21 @@ type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : nul
             using (container.BeginLifetimeScope()) (fun scope -> container.Resolve<IMapper<'TSource, 'TDestination>>(NamedParameter("source", source)))
         Builder<'TSource, 'TDestination>(source, finalMapper)
     
-    private new(source : 'TSource) = Builder<'TSource, 'TDestination>(source, Seq.empty<Assembly>)
+    internal new(source : 'TSource) = Builder<'TSource, 'TDestination>(source, Seq.empty<Assembly>)
 
 [<Sealed>]
 type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (source, assemblies : seq<Assembly>) = 
     member __.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
-        Builder<'T, 'TDestination>.Create(source, assemblies |> Seq.append (Seq.singleton typeof<'TDestination>.Assembly))
+        Builder<'T, 'TDestination>(source, assemblies |> Seq.append (Seq.singleton typeof<'TDestination>.Assembly))
     member __.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = 
-        Builder<'T, 'TDestination>.Create(source, mapper)
+        Builder<'T, 'TDestination>(source, mapper)
+
+[<Sealed>]
+type ListBuilder<'T when 'T : equality and 'T : null and 'T : not struct> internal (sourceList, assemblies : seq<Assembly>) = 
+    member __.ToList<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
+        sourceList |> Seq.map (fun s -> Builder<'T, 'TDestination>(s, assemblies |> Seq.append (Seq.singleton typeof<'TDestination>.Assembly)).Build())
+    member __.ToList<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = 
+        sourceList |> Seq.map (fun s -> Builder<'T, 'TDestination>(s, mapper).Build())
 
 [<Sealed; AbstractClass>]
 type Builder private () = 
@@ -74,3 +70,9 @@ type Builder private () =
                               Assembly.GetEntryAssembly()
                               AssemblyHelper.GetWebEntryAssembly()
                               typeof<'T>.Assembly ])
+    static member BuildList<'T when 'T : equality and 'T : null and 'T : not struct>(sourceList : seq<'T>) =
+        ListBuilder<'T>(sourceList, [ Assembly.GetCallingAssembly()
+                                      Assembly.GetExecutingAssembly()
+                                      Assembly.GetEntryAssembly()
+                                      AssemblyHelper.GetWebEntryAssembly()
+                                      typeof<'T>.Assembly ])

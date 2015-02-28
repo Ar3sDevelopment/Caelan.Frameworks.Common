@@ -77,3 +77,22 @@ type BuilderTest() =
 
         stopwatch.Stop()
         stopwatch.ElapsedMilliseconds |> printfn "%dms"
+
+    [<Test>]
+    member __.TestList() =
+        let stopwatch = Stopwatch()
+        stopwatch.Start()
+
+        let b = (fun i -> TestB(A = "test", B = "test2")) |> Seq.init 10
+        let a = Builder.BuildList(b).ToList<TestA>()
+
+        a |> Seq.iter
+            (fun aItem ->
+                let str = "A: " + aItem.A + " C: " + aItem.C
+
+                Assert.AreEqual (str, "A: test C: test2")
+
+                str |> printfn "%s")
+
+        stopwatch.Stop()
+        stopwatch.ElapsedMilliseconds |> printfn "%dms"

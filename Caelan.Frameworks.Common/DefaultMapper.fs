@@ -26,20 +26,14 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
                 | property -> property.SetValue(destination, t.GetValue(source)))
         | _ -> 
             customProperties
-            |> Array.Parallel.map (fun t ->
-                (t, match Attribute.GetCustomAttribute(t,typeof<MapEqualsAttribute>) with
-                    | null -> null
-                    | attribute -> attribute :?> MapEqualsAttribute))
+            |> Array.Parallel.map (fun t -> (t, Attribute.GetCustomAttribute(t,typeof<MapEqualsAttribute>) :?> MapEqualsAttribute))
             |> Array.Parallel.iter (fun (t, a) ->
                 match a with
                 | null -> ()
                 | _ -> destination.GetType().GetProperty(t.Name).SetValue(destination, t.GetValue(source)))
 
         customProperties
-        |> Array.Parallel.map (fun t ->
-            (t, match Attribute.GetCustomAttribute(t,typeof<MapFieldAttribute>) with
-                | null -> null
-                | attribute -> attribute :?> MapFieldAttribute))
+        |> Array.Parallel.map (fun t -> (t, Attribute.GetCustomAttribute(t,typeof<MapFieldAttribute>) :?> MapFieldAttribute))
         |> Array.Parallel.iter (fun (t, a) ->
             match a with
             | null -> ()

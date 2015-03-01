@@ -24,6 +24,7 @@ type TestB() =
 type TestC() = 
     [<MapEquals>]
     member val A = "" with get, set
+    [<MapEquals>]
     [<MapField("B")>]
     member val C = "" with get, set
 
@@ -31,8 +32,27 @@ type TestC() =
 type TestD() = 
     [<MapEquals>]
     member val A = "" with get, set
+    [<MapEquals>]
     [<MapField("C")>]
     member val B = "" with get, set
+
+[<MapEquals>]
+[<AllowNullLiteral>]
+type TestE() = 
+    [<MapField("C")>]
+    member val A = "" with get, set
+    [<MapField("D")>]
+    member val B = "" with get, set
+    [<MapField("E")>]
+    member val F = "" with get, set
+
+[<AllowNullLiteral>]
+[<MapEquals>]
+type TestF() = 
+    [<MapField("A")>]
+    member val C = "" with get, set
+    [<MapField("B")>]
+    member val D = "" with get, set
 
 type ABMapper() = 
     inherit DefaultMapper<TestA, TestB>()
@@ -42,7 +62,16 @@ type ABMapper() =
 
 [<TestFixture>]
 type BuilderTest() = 
-    
+    [<Test>]
+    member __.TestNull() =
+        let stopwatch = Stopwatch()
+        stopwatch.Start()
+        let a : TestA = null
+        let b = Builder.Build(a).To<TestB>()
+        Assert.IsNull(b)
+        stopwatch.Stop()
+        stopwatch.ElapsedMilliseconds |> printfn "%dms"
+
     [<Test>]
     member __.TestNoBuilder() = 
         let stopwatch = Stopwatch()
@@ -109,10 +138,22 @@ type BuilderTest() =
     member __.TestDefaultMapperAttributes() = 
         let stopwatch = Stopwatch()
         stopwatch.Start()
-        let b = TestD(A = "test", B = "test2")
-        let a = Builder.Build(b).To<TestC>()
-        let str = "A: " + a.A + " C: " + a.C
+        let d = TestD(A = "test", B = "test2")
+        let c = Builder.Build(d).To<TestC>()
+        let str = "A: " + c.A + " C: " + c.C
         Assert.AreEqual(str, "A: test C: test2")
+        str |> printfn "%s"
+        stopwatch.Stop()
+        stopwatch.ElapsedMilliseconds |> printfn "%dms"
+
+    [<Test>]
+    member __.TestDefaultMapperEqualsAttribute() = 
+        let stopwatch = Stopwatch()
+        stopwatch.Start()
+        let e = TestE(A = "test", B = "test2", F = "test3")
+        let f = Builder.Build(e).To<TestF>()
+        let str = "C: " + f.C + " D: " + f.D
+        Assert.AreEqual(str, "C: test D: test2")
         str |> printfn "%s"
         stopwatch.Stop()
         stopwatch.ElapsedMilliseconds |> printfn "%dms"

@@ -6,16 +6,13 @@ open Caelan.Frameworks.Common.Interfaces
 open System
 open System.Reflection
 
-module BuilderModule =
+module BuilderModule = 
     let internal isMapper (mapperType : Type) (t : Type) = not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition && mapperType.IsAssignableFrom(t)
-    let internal GetMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(assemblies : Assembly[]) = 
+    
+    let internal GetMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(assemblies : Assembly []) = 
         let cb = ContainerBuilder()
         let mapperType = typeof<IMapper<'TSource, 'TDestination>>
-        cb.RegisterGeneric(typedefof<DefaultMapper<'TSource, 'TDestination>>).As(typedefof<IMapper<'TSource, 'TDestination>>) |> ignore
-        let mainAssemblies = 
-            assemblies
-            |> Array.filter (fun t -> t <> null)
-        
+        let mainAssemblies = assemblies |> Array.filter (fun t -> t <> null)
         let refAssemblies = mainAssemblies |> Array.Parallel.collect (fun i -> i.GetReferencedAssemblies() |> Array.Parallel.map Assembly.Load)
         
         let allAssemblies = 
@@ -26,13 +23,14 @@ module BuilderModule =
                    match t with
                    | None -> None
                    | _ -> Some a)
+        cb.RegisterGeneric(typedefof<DefaultMapper<'TSource, 'TDestination>>).As(typedefof<IMapper<'TSource, 'TDestination>>) |> ignore
         cb.RegisterAssemblyTypes(allAssemblies).Where(fun t -> t |> isMapper mapperType).AsImplementedInterfaces() |> ignore
         let container = cb.Build()
         let finalMapper = using (container.BeginLifetimeScope()) (fun _ -> container.Resolve<IMapper<'TSource, 'TDestination>>())
         finalMapper
 
 [<Sealed>]
-type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (source, assemblies : Assembly[]) = 
+type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (source, assemblies : Assembly []) = 
     
     member this.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
         let allAssemblies = assemblies |> Array.append [| typeof<'TDestination>.Assembly |]
@@ -48,7 +46,7 @@ type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (
         (source, destination) |> mapper.Map
 
 [<Sealed>]
-type ListBuilder<'T when 'T : equality and 'T : null and 'T : not struct> internal (sourceList, assemblies : Assembly[]) = 
+type ListBuilder<'T when 'T : equality and 'T : null and 'T : not struct> internal (sourceList, assemblies : Assembly []) = 
     
     member this.ToList<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
         let allAssemblies = assemblies |> Array.append [| typeof<'TDestination>.Assembly |]
@@ -56,7 +54,7 @@ type ListBuilder<'T when 'T : equality and 'T : null and 'T : not struct> intern
     
     member __.ToList<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = sourceList |> Seq.map mapper.Map
 
-module Builder =
+module Builder = 
     let Build<'T when 'T : equality and 'T : null and 'T : not struct>(source : 'T) = 
         let assemblies = 
             [| Assembly.GetCallingAssembly()

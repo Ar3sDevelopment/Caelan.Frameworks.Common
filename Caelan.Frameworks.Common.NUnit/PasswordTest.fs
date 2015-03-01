@@ -6,12 +6,25 @@ open Caelan.Frameworks.Common.Classes
 type CustomPasswordHasher() =
     inherit PasswordHasher("salt", "default")
 
+type CustomPasswordEncryptor() =
+    inherit PasswordEncryptor("default")
+
 [<TestFixture>]
-type Test() = 
+type PasswordTest() = 
 
     [<Test>]
-    member __.TestPassword() =
+    member __.TestHasher() =
         let pwd = CustomPasswordHasher()
 
         "password" |> pwd.HashPassword |> printfn "%s"
+        pwd.DefaultPasswordHashed |> printfn "%s"
 
+    [<Test>]
+    member __.TestEncryption() =
+        let pwd = CustomPasswordEncryptor()
+
+        let crypted = "password" |> pwd.EncryptPassword
+
+        crypted |> printfn "%s"
+        crypted |> pwd.DecryptPassword |> printfn "%s"
+        pwd.DefaultPasswordEncrypted |> printfn "%s"

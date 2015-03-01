@@ -19,18 +19,17 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
         match sourceType with
         | _ when sourceType.GetCustomAttributes(typeof<MapEqualsAttribute>, true) |> Array.length > 0 ->
             sourceType.GetProperties()
-            |> Array.filter (fun t ->  destination.GetType().GetProperty(t.Name) <> null)
+            |> Array.choose (fun t -> match destination.GetType().GetProperty(t.Name) with
+                                      | null -> None
+                                      | property -> Some (property, t.GetValue(source)))
+            |> Array.Parallel.iter (fun (property, value) -> property.SetValue(destination, value))
+        | _ -> 
+            customProperties
+            |> Array.filter (fun t -> Attribute.GetCustomAttribute(t,typeof<MapEqualsAttribute>) <> null)
             |> Array.Parallel.iter (fun t ->
                 match destination.GetType().GetProperty(t.Name) with
                 | null -> ()
                 | property -> property.SetValue(destination, t.GetValue(source)))
-        | _ -> 
-            customProperties
-            |> Array.Parallel.map (fun t -> (t, Attribute.GetCustomAttribute(t,typeof<MapEqualsAttribute>) :?> MapEqualsAttribute))
-            |> Array.Parallel.iter (fun (t, a) ->
-                match a with
-                | null -> ()
-                | _ -> destination.GetType().GetProperty(t.Name).SetValue(destination, t.GetValue(source)))
 
         customProperties
         |> Array.Parallel.map (fun t -> (t, Attribute.GetCustomAttribute(t,typeof<MapFieldAttribute>) :?> MapFieldAttribute))

@@ -1,79 +1,76 @@
 ﻿namespace Caelan.Frameworks.Common.Classes
 
+open Autofac
+open Caelan.Frameworks.Common.Helpers
+open Caelan.Frameworks.Common.Interfaces
 open System
 open System.Reflection
-open Autofac
-open Caelan.Frameworks.Common.Interfaces
-open Caelan.Frameworks.Common.Helpers
 
-[<Sealed; AbstractClass>]
-type Builder private () = 
-    static member internal GetMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(source: 'TSource, assemblies : seq<Assembly>) =
+module BuilderModule =
+    let internal isMapper (mapperType : Type) (t : Type) = not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition && mapperType.IsAssignableFrom(t)
+    let internal GetMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(assemblies : Assembly[]) = 
         let cb = ContainerBuilder()
         let mapperType = typeof<IMapper<'TSource, 'TDestination>>
-        cb.RegisterGeneric(typedefof<DefaultMapper<'TSource, 'TDestination>>)
-          .As(typedefof<IMapper<'TSource, 'TDestination>>) |> ignore
+        cb.RegisterGeneric(typedefof<DefaultMapper<'TSource, 'TDestination>>).As(typedefof<IMapper<'TSource, 'TDestination>>) |> ignore
         let mainAssemblies = 
             assemblies
-            |> Seq.filter (fun t -> t <> null)
-            |> Seq.distinct
-            |> Seq.toArray
+            |> Array.filter (fun t -> t <> null)
         
-        let refAssemblies = 
+        let refAssemblies = mainAssemblies |> Array.Parallel.collect (fun i -> i.GetReferencedAssemblies() |> Array.Parallel.map Assembly.Load)
+        
+        let allAssemblies = 
             mainAssemblies
-            |> Array.Parallel.collect (fun i -> i.GetReferencedAssemblies())
-            |> Array.Parallel.map (fun t -> Assembly.Load(t))
-        
-        cb.RegisterAssemblyTypes(mainAssemblies |> Array.append refAssemblies)
-          .Where(fun t -> 
-          not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition && mapperType.IsAssignableFrom(t))
-          .AsImplementedInterfaces() |> ignore
+            |> Array.append refAssemblies
+            |> Array.Parallel.choose (fun a -> 
+                   let t = a.GetTypes() |> Seq.tryFind (fun i -> i |> isMapper mapperType)
+                   match t with
+                   | None -> None
+                   | _ -> Some a)
+        cb.RegisterAssemblyTypes(allAssemblies).Where(fun t -> t |> isMapper mapperType).AsImplementedInterfaces() |> ignore
         let container = cb.Build()
-        let finalMapper = 
-            using (container.BeginLifetimeScope()) (fun scope -> container.Resolve<IMapper<'TSource, 'TDestination>>(NamedParameter("source", source)))
+        let finalMapper = using (container.BeginLifetimeScope()) (fun _ -> container.Resolve<IMapper<'TSource, 'TDestination>>())
         finalMapper
 
 [<Sealed>]
-type Builder<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct> internal (mapper: IMapper<'TSource, 'TDestination>) = 
-    member __.Build() = mapper.Map()
-
-    member __.Build(destination : 'TDestination) = mapper.Map(destination)
-    member this.BuildAsync() = async { return this.Build() } |> Async.StartAsTask
+type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (source, assemblies : Assembly[]) = 
     
-    member this.BuildAsync(destination : 'TDestination) = 
-        async { return this.Build(destination) } |> Async.StartAsTask
-
-[<Sealed>]
-type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (source, assemblies : seq<Assembly>) = 
     member this.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
-        let allAssemblies = assemblies |> Seq.append (Seq.singleton typeof<'TDestination>.Assembly)
-        Builder<'T, 'TDestination>(Builder.GetMapper(source, allAssemblies)).Build()
-    member __.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = 
-        Builder<'T, 'TDestination>(mapper).Build()
-    member this.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(destination) = 
-        let allAssemblies = assemblies |> Seq.append (Seq.singleton typeof<'TDestination>.Assembly)
-        Builder<'T, 'TDestination>(Builder.GetMapper(source, allAssemblies)).Build(destination)
+        let allAssemblies = assemblies |> Array.append [| typeof<'TDestination>.Assembly |]
+        BuilderModule.GetMapper<'T, 'TDestination> allAssemblies |> this.To
+    
+    member __.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = mapper.Map(source)
+    
+    member this.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(destination : 'TDestination) = 
+        let allAssemblies = assemblies |> Array.append [| typeof<'TDestination>.Assembly |]
+        (destination, BuilderModule.GetMapper allAssemblies) |> this.To
+    
     member __.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(destination, mapper : IMapper<'T, 'TDestination>) = 
-        Builder<'T, 'TDestination>(mapper).Build(destination)
+        (source, destination) |> mapper.Map
 
 [<Sealed>]
-type ListBuilder<'T when 'T : equality and 'T : null and 'T : not struct> internal (sourceList, assemblies : seq<Assembly>) = 
-    member __.ToList<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
-        let allAssemblies = assemblies |> Seq.append (Seq.singleton typeof<'TDestination>.Assembly)
-        sourceList |> Seq.map (fun s -> Builder<'T, 'TDestination>(Builder.GetMapper(s, allAssemblies)).Build())
-    member __.ToList<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = 
-        sourceList |> Seq.map (fun s -> Builder<'T, 'TDestination>(mapper).Build())
+type ListBuilder<'T when 'T : equality and 'T : null and 'T : not struct> internal (sourceList, assemblies : Assembly[]) = 
+    
+    member this.ToList<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
+        let allAssemblies = assemblies |> Array.append [| typeof<'TDestination>.Assembly |]
+        BuilderModule.GetMapper<'T, 'TDestination> allAssemblies |> this.ToList
+    
+    member __.ToList<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = sourceList |> Seq.map mapper.Map
 
-type Builder with
-    static member Build<'T when 'T : equality and 'T : null and 'T : not struct>(source : 'T) = 
-        Builder<'T>(source, [ Assembly.GetCallingAssembly()
-                              Assembly.GetExecutingAssembly()
-                              Assembly.GetEntryAssembly()
-                              AssemblyHelper.GetWebEntryAssembly()
-                              typeof<'T>.Assembly ])
-    static member BuildList<'T when 'T : equality and 'T : null and 'T : not struct>(sourceList : seq<'T>) =
-        ListBuilder<'T>(sourceList, [ Assembly.GetCallingAssembly()
-                                      Assembly.GetExecutingAssembly()
-                                      Assembly.GetEntryAssembly()
-                                      AssemblyHelper.GetWebEntryAssembly()
-                                      typeof<'T>.Assembly ])
+module Builder =
+    let Build<'T when 'T : equality and 'T : null and 'T : not struct>(source : 'T) = 
+        let assemblies = 
+            [| Assembly.GetCallingAssembly()
+               Assembly.GetExecutingAssembly()
+               Assembly.GetEntryAssembly()
+               AssemblyHelper.GetWebEntryAssembly()
+               typeof<'T>.Assembly |]
+        Builder<'T>(source, assemblies)
+    
+    let BuildList<'T when 'T : equality and 'T : null and 'T : not struct>(sourceList : seq<'T>) = 
+        let assemblies = 
+            [| Assembly.GetCallingAssembly()
+               Assembly.GetExecutingAssembly()
+               Assembly.GetEntryAssembly()
+               AssemblyHelper.GetWebEntryAssembly()
+               typeof<'T>.Assembly |]
+        ListBuilder<'T>(sourceList, assemblies)

@@ -8,7 +8,7 @@ open Caelan.Frameworks.Common.Helpers
 type PasswordHasher(salt : string, defaultPassword : string, encryptor : IPasswordHasher) = 
     member val Salt = salt with get
     member val DefaultPassword = defaultPassword with get
-    member this.DefaultPasswordEncrypted with get() = this.HashPassword(this.DefaultPassword)
+    member this.DefaultPasswordHashed with get() = this.HashPassword(this.DefaultPassword)
     member this.HashPassword(password) = 
         (encryptor, password) 
         |> MemoizeHelper.Memoize(fun (e, p) -> e.HashPassword(this.Salt + e.HashPassword(p)))

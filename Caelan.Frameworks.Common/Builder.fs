@@ -13,12 +13,12 @@ module BuilderModule =
         let cb = ContainerBuilder()
         let mapperType = typeof<IMapper<'TSource, 'TDestination>>
         let mainAssemblies = assemblies |> Array.filter (fun t -> t <> null)
-        let refAssemblies = mainAssemblies |> Array.Parallel.collect (fun i -> i.GetReferencedAssemblies() |> Array.Parallel.map Assembly.Load)
+        let refAssemblies = mainAssemblies |> Array.collect (fun i -> i.GetReferencedAssemblies() |> Array.map Assembly.Load)
         
         let allAssemblies = 
             mainAssemblies
             |> Array.append refAssemblies
-            |> Array.Parallel.choose (fun a -> 
+            |> Array.choose (fun a -> 
                    let t = a.GetTypes() |> Seq.tryFind (fun i -> i |> isMapper mapperType)
                    match t with
                    | None -> None

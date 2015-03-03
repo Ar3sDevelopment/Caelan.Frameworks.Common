@@ -1,2 +1,8 @@
 language: csharp
 solution: Caelan.Frameworks.Common.sln
+install:
+  - nuget restore Caelan.Frameworks.Common.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release Caelan.Frameworks.Common.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Caelan.Frameworks.Common.NUnit/bin/Release/Caelan.Frameworks.Common.NUnit.dll

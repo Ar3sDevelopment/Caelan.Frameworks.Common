@@ -8,15 +8,16 @@ My Framework.Common package is an utility framework for delegating the object ma
 ##`Builder` and `IMapper<TSource, TDestination>`##
 You can use `Builder` class for map a source to a destination or create a new object from the source like this:
 ```csharp
-var userDto = Builder.Source<User>().Destination<UserDTO>().Build(user); //user is a User instance
+var userDto = Builder.Build(user).To<UserDTO>(); //user is a User instance
 ```
 But if a `IMapper<User, UserDTO>` implementation is missing it will build an empty `UserDTO`.
-`DefaultMapper<TSource, TDestination>` is an abstract class that prepare a simple `IMapper<TSource, TDestination>` implementation, you have only to define a body for `Map(TSource source, ref TDestination destination)` method, like this:
+`DefaultMapper<TSource, TDestination>` is an abstract class that prepare a simple `IMapper<TSource, TDestination>` implementation, you have only to define a body for `Map(TSource source, TDestination destination)` method, like this:
 ```csharp
 public class UserDTOMapper : DefaultMapper<User, UserDTO>
 {
-  public override void Map(User source, ref UserDTO destination)
+  public override void Map(User source, UserDTO destination)
   {
+    base.Map(source, destination)
     //body here like
     //destination.Member = source.Member;
     //nothing to return
@@ -28,21 +29,37 @@ If `Builder` class can't find it or you have multiple mapper for same types you 
 ```csharp
 var mapper = new UserDTOMapper();
 //if the mapper has some custom property you can initialize them here
-var userDto = Builder.Source<User>().Destination<UserDTO>(mapper).Build(user); //user is a User instance
+var userDto = Builder.Build(user).To<UserDTO>(mapper); //user is a User instance
 ```
 
 ##`IPasswordEncryptor`##
-`IPasswordEncryptor` is a simple interface with one method:
+`IPasswordEncryptor` is a simple interface with two methods:
 ```csharp
 string EncryptPassword(string password)
+string DecryptPassword(string password)
 ```
 And you can inherit from this for a custom password encryptor and reference it by the interface.
-I created a small `PasswordHelper` class that provides *SHA512* hashing with a custom salt.
-`PasswordHelper` is very simple, you can instantiate like this:
+I created a small `PasswordEncryptor` class that provides *Base64* crypting.
+`PasswordEncryptor` is very simple, you can instantiate like this:
+```csharp
+const string default = "Def4ult";
+var encryptor = new PasswordEncryptor(default);
+//and now you know how to encrypt
+encryptor.EncryptPassword("123456789");
+```
+
+##`IPasswordHasher`##
+`IPasswordHasher` is a simple interface with two methods:
+```csharp
+string HashPassword(string password)
+```
+And you can inherit from this for a custom password encryptor and reference it by the interface.
+I created a small `PasswordHasher` class that provides *SHA512* hasing with a salt.
+`PasswordEncryptor` is very simple, you can instantiate like this:
 ```csharp
 const string salt = "Salty";
 const string default = "Def4ult";
-var encryptor = new PasswordHelper(salt, default);
+var encryptor = new PasswordHasher(salt, default);
 //and now you know how to encrypt
-encryptor.EncryptPassword("123456789");
+encryptor.HashPassword("123456789");
 ```

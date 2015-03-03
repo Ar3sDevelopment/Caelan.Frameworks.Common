@@ -1,4 +1,7 @@
 version: 3.1.0.{build}
+branches:
+  except:
+  - gh-pages
 skip_tags: true
 configuration: Release
 assembly_info:

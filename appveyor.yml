@@ -22,6 +22,6 @@ deploy:
     branch: master
 - provider: GitHub
   auth_token:
-    secure: tzUwO97cIRRZ9vgXaCaeV0ds46LzcowkJibAKrleVFE+a+OLG35YC9Kc5s5Mj7T0
+    secure: QUNpmgp2dvA0M/Veuo7NJkjNXBJOxFsDAartHAjZfKhaLzFKdITHHhmST6ZUTdxu
   on:
     branch: master

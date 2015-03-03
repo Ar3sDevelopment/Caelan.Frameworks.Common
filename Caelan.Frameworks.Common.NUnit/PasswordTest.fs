@@ -26,5 +26,11 @@ type PasswordTest() =
         let crypted = "password" |> pwd.EncryptPassword
 
         crypted |> printfn "%s"
-        crypted |> pwd.DecryptPassword |> printfn "%s"
+
+        let decrypted = crypted |> pwd.DecryptPassword
+
+        (decrypted, "password") |> Assert.AreEqual
+
+        decrypted |> printfn "%s"
+
         pwd.DefaultPasswordEncrypted |> printfn "%s"

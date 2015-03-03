@@ -1,4 +1,4 @@
-#Common Framework [![Build status](https://ci.appveyor.com/api/projects/status/0wi8iemmxy4xu986/branch/master?svg=true)](https://ci.appveyor.com/project/Ar3s/caelan-frameworks-common/branch/master)
+#Common Framework [![Build status](https://ci.appveyor.com/api/projects/status/0wi8iemmxy4xu986/branch/master?svg=true)](https://ci.appveyor.com/project/Ar3s/caelan-frameworks-common/branch/master) [![Build Status](https://travis-ci.org/Ar3sDevelopment/Caelan.Frameworks.Common.svg?branch=dev)](https://travis-ci.org/Ar3sDevelopment/Caelan.Frameworks.Common)
 The Caelan.Frameworks.Common NuGet Package
 If you need support or you want to contact me I'm [CaelanIt](https://twitter.com/CaelanIt) on Twitter
 

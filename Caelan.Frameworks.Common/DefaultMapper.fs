@@ -22,18 +22,18 @@ type DefaultMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource
             |> Array.choose (fun t -> match destination.GetType().GetProperty(t.Name) with
                                       | null -> None
                                       | property -> Some (property, t.GetValue(source)))
-            |> Array.Parallel.iter (fun (property, value) -> property.SetValue(destination, value))
+            |> Array.iter (fun (property, value) -> property.SetValue(destination, value))
         | _ -> 
             customProperties
             |> Array.filter (fun t -> Attribute.GetCustomAttribute(t,typeof<MapEqualsAttribute>) <> null)
-            |> Array.Parallel.iter (fun t ->
+            |> Array.iter (fun t ->
                 match destination.GetType().GetProperty(t.Name) with
                 | null -> ()
                 | property -> property.SetValue(destination, t.GetValue(source)))
 
         customProperties
-        |> Array.Parallel.map (fun t -> (t, Attribute.GetCustomAttribute(t,typeof<MapFieldAttribute>) :?> MapFieldAttribute))
-        |> Array.Parallel.iter (fun (t, a) ->
+        |> Array.map (fun t -> (t, Attribute.GetCustomAttribute(t,typeof<MapFieldAttribute>) :?> MapFieldAttribute))
+        |> Array.iter (fun (t, a) ->
             match a with
             | null -> ()
             | _ ->

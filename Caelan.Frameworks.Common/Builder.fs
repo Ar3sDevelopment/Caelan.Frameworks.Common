@@ -9,7 +9,7 @@ open System.Reflection
 module Builder = 
     let internal isMapper (mapperType : Type) (t : Type) = mapperType.IsAssignableFrom(t) && not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition
     
-    let internal getMapper<'TSource, 'TDestination when 'TSource : equality and 'TSource : null and 'TSource : not struct and 'TDestination : equality and 'TDestination : null and 'TDestination : not struct> (assemblies : Assembly []) = 
+    let internal getMapper<'TSource, 'TDestination> (assemblies : Assembly []) = 
         typeof<IMapper<'TSource, 'TDestination>> |> MemoizeHelper.Memoize(fun mapperType -> 
                                                         let cb = ContainerBuilder()
                                                         let mainAssemblies = assemblies |> Array.filter (fun t -> t <> null)
@@ -25,37 +25,39 @@ module Builder =
                                                         using (container.BeginLifetimeScope()) (fun _ -> container.Resolve<IMapper<'TSource, 'TDestination>>()))
     
     [<Sealed>]
-    type Builder<'T when 'T : equality and 'T : null and 'T : not struct> internal (source, assemblies : Assembly []) = 
-        
-        member this.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
-            let mapper : IMapper<'T, 'TDestination> = 
+    type Builder<'T> internal (source, assemblies : Assembly []) = 
+        member this.To<'TDestination>() = 
+            let destination = Activator.CreateInstance<'TDestination>()
+            let mapper = 
                 assemblies
                 |> Array.append [| typeof<'TDestination>.Assembly |]
                 |> getMapper
-            mapper |> this.To
+            (destination, mapper) |> this.To
         
-        member __.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = mapper.Map(source)
+        member this.To<'TDestination>(mapper : IMapper<'T, 'TDestination>) =
+            let destination = Activator.CreateInstance<'TDestination>()
+            (destination, mapper) |> this.To
         
-        member this.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(destination : 'TDestination) = 
+        member this.To<'TDestination>(destination : 'TDestination) = 
             (destination, 
              assemblies
              |> Array.append [| typeof<'TDestination>.Assembly |]
              |> getMapper)
             |> this.To
         
-        member __.To<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(destination, mapper : IMapper<'T, 'TDestination>) = 
+        member __.To<'TDestination>(destination, mapper : IMapper<'T, 'TDestination>) = 
             (source, destination) |> mapper.Map
     
     [<Sealed>]
-    type ListBuilder<'T when 'T : equality and 'T : null and 'T : not struct> internal (sourceList, assemblies : Assembly []) = 
+    type ListBuilder<'T> internal (sourceList, assemblies : Assembly []) = 
         
-        member this.ToList<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>() = 
+        member this.ToList<'TDestination>() = 
             let allAssemblies = assemblies |> Array.append [| typeof<'TDestination>.Assembly |]
             getMapper<'T, 'TDestination> allAssemblies |> this.ToList
         
-        member __.ToList<'TDestination when 'TDestination : equality and 'TDestination : null and 'TDestination : not struct>(mapper : IMapper<'T, 'TDestination>) = sourceList |> Seq.map mapper.Map
+        member __.ToList<'TDestination>(mapper : IMapper<'T, 'TDestination>) = sourceList |> Seq.map mapper.Map
     
-    let Build<'T when 'T : equality and 'T : null and 'T : not struct>(source : 'T) = 
+    let Build<'T>(source : 'T) = 
         let assemblies = 
             [| Assembly.GetCallingAssembly()
                Assembly.GetExecutingAssembly()
@@ -64,7 +66,7 @@ module Builder =
                typeof<'T>.Assembly |]
         Builder<'T>(source, assemblies)
     
-    let BuildList<'T when 'T : equality and 'T : null and 'T : not struct>(sourceList : seq<'T>) = 
+    let BuildList<'T>(sourceList : seq<'T>) = 
         let assemblies = 
             [| Assembly.GetCallingAssembly()
                Assembly.GetExecutingAssembly()

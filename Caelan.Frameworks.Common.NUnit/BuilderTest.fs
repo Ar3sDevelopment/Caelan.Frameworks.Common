@@ -2,75 +2,22 @@
 
 open Caelan.Frameworks.Common.Attributes
 open Caelan.Frameworks.Common.Classes
+open Caelan.Frameworks.Common.NUnit.Common.Classes
 open NUnit.Framework
 open System
 open System.Diagnostics
 
-[<MapEquals>]
-[<AllowNullLiteral>]
-type TestA() = 
-    member val A = "" with get, set
-    [<MapField("B")>]
-    member val C = "" with get, set
-
-[<MapEquals>]
-[<AllowNullLiteral>]
-type TestB() = 
-    member val A = "" with get, set
-    [<MapField("C")>]
-    member val B = "" with get, set
-
-[<AllowNullLiteral>]
-type TestC() = 
-    [<MapEquals>]
-    member val A = "" with get, set
-    [<MapEquals>]
-    [<MapField("B")>]
-    member val C = "" with get, set
-
-[<AllowNullLiteral>]
-type TestD() = 
-    [<MapEquals>]
-    member val A = "" with get, set
-    [<MapEquals>]
-    [<MapField("C")>]
-    member val B = "" with get, set
-
-[<MapEquals>]
-[<AllowNullLiteral>]
-type TestE() = 
-    [<MapField("C")>]
-    member val A = "" with get, set
-    [<MapField("D")>]
-    member val B = "" with get, set
-    [<MapField("E")>]
-    member val F = "" with get, set
-
-[<AllowNullLiteral>]
-[<MapEquals>]
-type TestF() = 
-    [<MapField("A")>]
-    member val C = "" with get, set
-    [<MapField("B")>]
-    member val D = "" with get, set
-
-type ABMapper() = 
-    inherit DefaultMapper<TestA, TestB>()
-    override __.Map(source, dest) = 
-        base.Map(source, dest)
-        dest.B <- dest.B + " mapper"
-
 [<TestFixture>]
 type BuilderTest() = 
-    [<Test>]
+    (*[<Test>]
     member __.TestNull() =
         let stopwatch = Stopwatch()
         stopwatch.Start()
-        let a : TestA = null
+        let a : TestA = Unchecked.defaultof<TestA>
         let b = Builder.Build(a).To<TestB>()
         Assert.IsNull(b)
         stopwatch.Stop()
-        stopwatch.ElapsedMilliseconds |> printfn "%dms"
+        stopwatch.ElapsedMilliseconds |> printfn "%dms"*)
 
     [<Test>]
     member __.TestNoBuilder() = 

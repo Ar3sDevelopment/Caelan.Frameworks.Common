@@ -1,12 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E2782E87-0D07-4712-8F81-34DD157455E2}</ProjectGuid>
+    <ProjectGuid>{3BD968AB-2879-4335-9FEB-D46741C88FA3}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Caelan.Frameworks.Common.NUnit</RootNamespace>
-    <AssemblyName>Caelan.Frameworks.Common.NUnit</AssemblyName>
+    <RootNamespace>Caelan.Frameworks.Common.NUnit.Common</RootNamespace>
+    <AssemblyName>Caelan.Frameworks.Common.NUnit.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -32,27 +32,23 @@
     <ConsolePause>false</ConsolePause>
     <Tailcalls>true</Tailcalls>
   </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
-  <ItemGroup>
-    <Compile Include="PasswordTest.fs" />
-    <Compile Include="BuilderTest.fs" />
-    <None Include="packages.config" />
-  </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Classes.fs" />
+    <Compile Include="Mappers.fs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
+  <ItemGroup>
     <ProjectReference Include="..\Caelan.Frameworks.Common\Caelan.Frameworks.Common.fsproj">
       <Project>{13389501-A209-4BEC-B442-1B0B8B2F1A21}</Project>
       <Name>Caelan.Frameworks.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Caelan.Frameworks.Common.NUnit.Common\Caelan.Frameworks.Common.NUnit.Common.fsproj">
-      <Project>{3BD968AB-2879-4335-9FEB-D46741C88FA3}</Project>
-      <Name>Caelan.Frameworks.Common.NUnit.Common</Name>
-    </ProjectReference>
-    <Reference Include="FSharp.Core" />
   </ItemGroup>
 </Project>

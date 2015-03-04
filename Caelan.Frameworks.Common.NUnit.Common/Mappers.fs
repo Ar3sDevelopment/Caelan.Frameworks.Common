@@ -7,5 +7,6 @@ module Mappers =
     type ABMapper() = 
         inherit DefaultMapper<TestA, TestB>()
         override __.Map(source, dest) = 
-            base.Map(source, dest)
+            base.Map(source, dest) |> ignore
             dest.B <- dest.B + " mapper"
+            dest

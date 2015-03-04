@@ -9,15 +9,17 @@ open System.Diagnostics
 
 [<TestFixture>]
 type BuilderTest() = 
-    (*[<Test>]
+    [<Test>]
     member __.TestNull() =
         let stopwatch = Stopwatch()
         stopwatch.Start()
         let a : TestA = Unchecked.defaultof<TestA>
-        let b = Builder.Build(a).To<TestB>()
-        Assert.IsNull(b)
+        Assert.Catch<Exception>(fun t ->
+            let b = Builder.Build(a).To<TestB>()
+            Assert.IsNull(b)
+        ).Message |> printfn "%s"
         stopwatch.Stop()
-        stopwatch.ElapsedMilliseconds |> printfn "%dms"*)
+        stopwatch.ElapsedMilliseconds |> printfn "%dms"
 
     [<Test>]
     member __.TestNoBuilder() = 
@@ -49,7 +51,7 @@ type BuilderTest() =
         stopwatch.Start()
         let a = TestA(A = "test", C = "test")
         let b = TestB(A = "pippo", B = "pluto")
-        Builder.Build(a).To(b)
+        Builder.Build(a).To(b) |> ignore
         let str = "A: " + b.A + " B: " + b.B
         Assert.AreEqual(str, "A: test B: test mapper")
         str |> printfn "%s"

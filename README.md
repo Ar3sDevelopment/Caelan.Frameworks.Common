@@ -1,6 +1,12 @@
-#Common Framework [![Build status](https://ci.appveyor.com/api/projects/status/0wi8iemmxy4xu986/branch/master?svg=true)](https://ci.appveyor.com/project/Ar3s/caelan-frameworks-common/branch/master) [![Build Status](https://travis-ci.org/Ar3sDevelopment/Caelan.Frameworks.Common.svg?branch=dev)](https://travis-ci.org/Ar3sDevelopment/Caelan.Frameworks.Common)
+#Common Framework
 The Caelan.Frameworks.Common NuGet Package
 If you need support or you want to contact me I'm [CaelanIt](https://twitter.com/CaelanIt) on Twitter
+##Build##
+AppVeyor (Windows): [![Build status](https://ci.appveyor.com/api/projects/status/0wi8iemmxy4xu986/branch/master?svg=true)](https://ci.appveyor.com/project/Ar3s/caelan-frameworks-common/branch/master)
+Travis CI (Unix Mono): [![Build Status](https://travis-ci.org/Ar3sDevelopment/Caelan.Frameworks.Common.svg?branch=dev)](https://travis-ci.org/Ar3sDevelopment/Caelan.Frameworks.Common)
+##Requests##
+Pull Requests: [![Issue Stats](http://issuestats.com/github/Ar3sDevelopment/Caelan.Frameworks.Common/badge/pr)](http://issuestats.com/github/Ar3sDevelopment/Caelan.Frameworks.Common)
+Issues: [![Issue Stats](http://issuestats.com/github/Ar3sDevelopment/Caelan.Frameworks.Common/badge/issue)](http://issuestats.com/github/Ar3sDevelopment/Caelan.Frameworks.Common)
 
 ##What is it?##
 My Framework.Common package is an utility framework for delegating the object mapping to a specific class or simply for a password hasher class.

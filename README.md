@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/Ar3sDevelopment/Caelan.Frameworks.Common.png?label=ready&title=Ready)](https://waffle.io/Ar3sDevelopment/Caelan.Frameworks.Common)
 #Common Framework
 The Caelan.Frameworks.Common NuGet Package
 If you need support or you want to contact me I'm [CaelanIt](https://twitter.com/CaelanIt) on Twitter

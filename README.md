@@ -1,5 +1,6 @@
 #Common Framework
-The Caelan.Frameworks.Common NuGet Package
+The Caelan.Frameworks.Common NuGet Package [![NuGet version](https://badge.fury.io/nu/Caelan.Frameworks.Common.svg)](http://badge.fury.io/nu/Caelan.Frameworks.Common)
+
 If you need support or you want to contact me I'm [CaelanIt](https://twitter.com/CaelanIt) on Twitter
 ##Build##
 AppVeyor (Windows): [![Build status](https://ci.appveyor.com/api/projects/status/0wi8iemmxy4xu986?svg=true)](https://ci.appveyor.com/project/matteobruni/caelan-frameworks-common)

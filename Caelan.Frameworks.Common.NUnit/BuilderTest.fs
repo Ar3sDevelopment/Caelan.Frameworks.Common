@@ -14,10 +14,8 @@ type BuilderTest() =
         let stopwatch = Stopwatch()
         stopwatch.Start()
         let a : TestA = Unchecked.defaultof<TestA>
-        Assert.Catch<Exception>(fun t ->
-            let b = Builder.Build(a).To<TestB>()
-            Assert.IsNull(b)
-        ).Message |> printfn "%s"
+        let b = Builder.Build(a).To<TestB>()
+        Assert.IsNull(b)
         stopwatch.Stop()
         stopwatch.ElapsedMilliseconds |> printfn "%dms"
 
@@ -104,5 +102,15 @@ type BuilderTest() =
         let str = "C: " + f.C + " D: " + f.D
         Assert.AreEqual(str, "C: test D: test2")
         str |> printfn "%s"
+        stopwatch.Stop()
+        stopwatch.ElapsedMilliseconds |> printfn "%dms"
+
+    [<Test>]
+    member __.TestIntFloat() =
+        let stopwatch = Stopwatch()
+        stopwatch.Start()
+        let source = 10
+        let destination = Builder.Build(source).To<float>()
+        destination |> printfn "%0.00f"
         stopwatch.Stop()
         stopwatch.ElapsedMilliseconds |> printfn "%dms"

@@ -10,3 +10,9 @@ module Mappers =
             base.Map(source, dest) |> ignore
             dest.B <- dest.B + " mapper"
             dest
+
+    type IntFloatMapper() =
+        inherit DefaultMapper<int, float>()
+
+        override __.Map(source, destination) =
+            (float)source

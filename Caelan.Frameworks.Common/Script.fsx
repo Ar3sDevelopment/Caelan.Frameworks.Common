@@ -16,8 +16,17 @@ type TestMapper() =
 
     override __.Map(source, destination) =
         destination.A <- source.A
+        destination
+
+type TestMapper2() =
+    inherit DefaultMapper<int, string>()
+
+    override __.Map(source, destination) =
+        source.ToString()
 
 let testA = TestA()
-let testB = Builder<TestA, TestB>.Create().Build(testA)
+let testB = Builder.Build(testA).To<TestB>()
 
 testB.A
+
+Builder.Build(0).To<string>()

@@ -46,7 +46,10 @@ module Builder =
             |> this.To
         
         member __.To<'TDestination>(destination, mapper : IMapper<'T, 'TDestination>) = 
-            (source, destination) |> mapper.Map
+            let sourceObj = source :> obj
+            match sourceObj with
+            | null -> Unchecked.defaultof<'TDestination>
+            | _ -> (source, destination) |> mapper.Map
     
     [<Sealed>]
     type ListBuilder<'T> internal (sourceList, assemblies : Assembly []) = 

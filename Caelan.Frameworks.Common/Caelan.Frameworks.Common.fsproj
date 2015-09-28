@@ -64,6 +64,7 @@
     <Compile Include="MapFieldAttribute.fs" />
     <Compile Include="DefaultMapper.fs" />
     <Compile Include="Builder.fs" />
+    <Compile Include="DateTimeRange.fs" />
     <None Include="Caelan.Frameworks.Common.nuspec" />
   </ItemGroup>
   <ItemGroup>

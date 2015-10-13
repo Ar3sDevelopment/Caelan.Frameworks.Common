@@ -83,10 +83,10 @@
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.-->
   <Target Name="BeforeBuild">
-    <Message Text="VS Version: $(VisualStudioVersion)" Importance="high"/>
+    <Message Text="F# Targets Path: $(FSharpTargetsPath)" Importance="high"/>
   </Target>
   <Target Name="AfterBuild">
-    <Message Text="VS Version: $(VisualStudioVersion)" Importance="high"/>
+    <Message Text="F# Targets Path: $(FSharpTargetsPath)" Importance="high"/>
   </Target>
   <!-- -->
 </Project>

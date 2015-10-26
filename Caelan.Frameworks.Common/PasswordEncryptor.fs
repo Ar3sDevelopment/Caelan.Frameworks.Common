@@ -4,21 +4,65 @@ open Caelan.Frameworks.Common.Helpers
 open Caelan.Frameworks.Common.Interfaces
 open System
 open System.Text
+open System.IO
+open System.Security.Cryptography
 
-type PasswordEncryptor(defaultPassword : string, encryptor : IPasswordEncryptor) = 
+type PasswordEncryptor(defaultPassword : string, secret : string, salt : string, encryptor : IPasswordEncryptor) = 
     member val DefaultPassword = defaultPassword
     member this.DefaultPasswordEncrypted = this.EncryptPassword(this.DefaultPassword)
-    member __.EncryptPassword(password) = (encryptor, password) |> MemoizeHelper.Memoize(fun (e, p) -> e.EncryptPassword(p))
-    member __.DecryptPassword(crypted) = (encryptor, crypted) |> MemoizeHelper.Memoize(fun (e, p) -> e.DecryptPassword(p))
-    new(defaultPassword) = 
+    member __.EncryptPassword(password) = (encryptor, password) |> MemoizeHelper.Memoize(fun (e, p) -> e.EncryptPassword(p, secret, salt))
+    member __.DecryptPassword(crypted) = (encryptor, crypted) |> MemoizeHelper.Memoize(fun (e, p) -> e.DecryptPassword(p, secret, salt))
+    new(defaultPassword, secret, salt) = 
         let encryptor = 
             { new IPasswordEncryptor with
+                  member __.EncryptPassword(password, secret, salt) = 
+                      let saltBytes = salt |> Encoding.ASCII.GetBytes
+                      using (new Rfc2898DeriveBytes(secret, saltBytes)) (fun key ->
+                          using (new RijndaelManaged()) (fun aes ->
+                              aes.Key <- key.GetBytes(aes.KeySize / 8)
+
+                              let encryptor = aes.CreateEncryptor(aes.Key, aes.IV)
+
+                              using (new MemoryStream()) (fun msEncrypt ->
+                                  msEncrypt.Write(BitConverter.GetBytes(aes.IV.Length), 0, sizeof<int>)
+                                  msEncrypt.Write(aes.IV, 0, aes.IV.Length)
+
+                                  using (new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write)) (fun csEncrypt ->
+                                      using (new StreamWriter(csEncrypt)) (fun swEncrypt ->
+                                          swEncrypt.Write(password)
+                                      )
+                                  )
+
+                                  Convert.ToBase64String(msEncrypt.ToArray())
+                              )
+                          )
+                      )
                   
-                  member __.EncryptPassword(password) = 
-                      let bytes = Encoding.UTF8.GetBytes(password)
-                      Convert.ToBase64String(bytes)
-                  
-                  member __.DecryptPassword(crypted) = 
-                      let bytes = Convert.FromBase64String(crypted)
-                      Encoding.UTF8.GetString(bytes) }
-        PasswordEncryptor(defaultPassword, encryptor)
+                  member __.DecryptPassword(crypted, secret, salt) = 
+                      let saltBytes = salt |> Encoding.ASCII.GetBytes
+                      using (new MemoryStream(Convert.FromBase64String(crypted))) (fun msDecrypt ->
+                          let mutable rawLength : byte[] = sizeof<int> |> Array.zeroCreate 
+
+                          msDecrypt.Read(rawLength, 0, rawLength.Length) |> ignore
+
+                          let mutable buffer : byte[] = BitConverter.ToInt32(rawLength, 0) |> Array.zeroCreate
+
+                          msDecrypt.Read(buffer, 0, buffer.Length) |> ignore
+
+                          let iv = buffer
+                          using (new Rfc2898DeriveBytes(secret, saltBytes)) (fun key ->
+                              using (new RijndaelManaged()) (fun aes ->
+                                  aes.Key <- key.GetBytes(aes.KeySize / 8)
+                                  aes.IV <- iv
+
+                                  let decryptor = aes.CreateDecryptor(aes.Key, aes.IV)
+
+                                  using (new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read)) (fun csDecrypt ->
+                                      using (new StreamReader(csDecrypt)) (fun srDecrypt ->
+                                          srDecrypt.ReadToEnd()
+                                      )
+                                  )
+                              )
+                          )
+                      ) }
+        PasswordEncryptor(defaultPassword, secret, salt, encryptor)

@@ -7,7 +7,7 @@ type CustomPasswordHasher() =
     inherit PasswordHasher("salt", "default")
 
 type CustomPasswordEncryptor() =
-    inherit PasswordEncryptor("default")
+    inherit PasswordEncryptor("default", "secret", "saltsalt")
 
 [<TestFixture>]
 type PasswordTest() = 

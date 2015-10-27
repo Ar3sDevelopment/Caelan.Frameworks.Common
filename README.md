@@ -64,7 +64,7 @@ var original = encryptor.DecryptPassword(crypted);
 ```
 
 ##`IPasswordHasher`##
-`IPasswordHasher` is a simple interface with two methods:
+`IPasswordHasher` is a simple interface with one method:
 ```csharp
 string HashPassword(string password)
 ```

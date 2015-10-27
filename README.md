@@ -26,12 +26,12 @@ But if a `IMapper<User, UserDTO>` implementation is missing it will build an emp
 ```csharp
 public class UserDTOMapper : DefaultMapper<User, UserDTO>
 {
-  public override void Map(User source, UserDTO destination)
+  public override UserDTO Map(User source, UserDTO destination)
   {
     base.Map(source, destination)
     //body here like
     //destination.Member = source.Member;
-    //nothing to return
+    return destination;
   }
 }
 ```
@@ -53,10 +53,10 @@ And you can inherit from this for a custom password encryptor and reference it b
 I created a small `PasswordEncryptor` class that provides *AES256* crypting by default.
 `PasswordEncryptor` is very simple, you can instantiate like this:
 ```csharp
-const string default = "Def4ult";
+const string defaultPassword = "Def4ult";
 const string secret = "secret";
 const string salt = "saltsalt"; //lenght must be at least 8
-var encryptor = new PasswordEncryptor(default, secret, salt);
+var encryptor = new PasswordEncryptor(defaultPassword, secret, salt);
 //and now you know how to encrypt
 var crypted = encryptor.EncryptPassword("123456789");
 //and now you know how to decrypt
@@ -73,8 +73,8 @@ I created a small `PasswordHasher` class that provides *SHA512* hasing with a sa
 `PasswordEncryptor` is very simple, you can instantiate like this:
 ```csharp
 const string salt = "Salty";
-const string default = "Def4ult";
-var encryptor = new PasswordHasher(salt, default);
+const string defaultPassword = "Def4ult";
+var encryptor = new PasswordHasher(salt, defaultPassword);
 //and now you know how to encrypt
 encryptor.HashPassword("123456789");
 ```

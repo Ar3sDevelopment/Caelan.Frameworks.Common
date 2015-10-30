@@ -8,9 +8,23 @@ open System.IO
 open System.Security.Cryptography
 
 type PasswordEncryptor(defaultPassword : string, secret : string, salt : string, encryptor : IPasswordEncryptor) = 
+    /// <summary>
+    /// 
+    /// </summary>
     member val DefaultPassword = defaultPassword
+    /// <summary>
+    /// 
+    /// </summary>
     member this.DefaultPasswordEncrypted = this.EncryptPassword(this.DefaultPassword)
+    /// <summary>
+    /// This function encrypts given password using the encryptor inside the class
+    /// </summary>
+    /// <param name="password">The password to be encrypted</param>
     member __.EncryptPassword(password) = (encryptor, password) |> MemoizeHelper.Memoize(fun (e, p) -> e.EncryptPassword(p, secret, salt))
+    /// <summary>
+    /// This function decrypts given password using the encryptor inside the class
+    /// </summary>
+    /// <param name="crypted">The crypted data to be decrypted</param>
     member __.DecryptPassword(crypted) = (encryptor, crypted) |> MemoizeHelper.Memoize(fun (e, p) -> e.DecryptPassword(p, secret, salt))
     new(defaultPassword, secret, salt) = 
         let encryptor = 

@@ -8,7 +8,16 @@ type DefaultMapper<'TSource, 'TDestination>() =
         member this.Map(source) = this.Map(source)
         member this.Map (source, destination) = this.Map(source,destination)
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="destination"></param>
     abstract Map : source:'TSource * destination:'TDestination -> 'TDestination
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="source"></param>
     abstract Map : source:'TSource -> 'TDestination
 
     override __.Map (source, destination) =
@@ -25,7 +34,7 @@ type DefaultMapper<'TSource, 'TDestination>() =
             |> Array.iter (fun (property, value) -> property.SetValue(destination, value))
         | _ -> 
             customProperties
-            |> Array.filter (fun t -> Attribute.GetCustomAttribute(t,typeof<MapEqualsAttribute>) <> null)
+            |> Array.filter (fun t -> Attribute.GetCustomAttribute(t,typeof<MapEqualsAttribute>) |> (isNull >> not))
             |> Array.iter (fun t ->
                 match destination.GetType().GetProperty(t.Name) with
                 | null -> ()

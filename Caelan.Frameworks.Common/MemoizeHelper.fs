@@ -1,9 +1,9 @@
 ﻿namespace Caelan.Frameworks.Common.Helpers
 
+open System.Collections.Generic
+
 [<AutoOpen>]
 module MemoizeHelper = 
-    open System.Collections.Generic
-    
     let Memoize f = 
         let cache = Dictionary<_, _>()
         fun x -> 

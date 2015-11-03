@@ -31,7 +31,7 @@ public class UserDTOMapper : DefaultMapper<User, UserDTO>
     base.Map(source, destination)
     //body here like
     //destination.Member = source.Member;
-    //nothing to return
+    return destination;
   }
 }
 ```
@@ -46,21 +46,25 @@ var userDto = Builder.Build(user).To<UserDTO>(mapper); //user is a User instance
 ##`IPasswordEncryptor`##
 `IPasswordEncryptor` is a simple interface with two methods:
 ```csharp
-string EncryptPassword(string password)
-string DecryptPassword(string password)
+string EncryptPassword(string password, string secret, string salt)
+string DecryptPassword(string crypted, string secret, string salt)
 ```
 And you can inherit from this for a custom password encryptor and reference it by the interface.
-I created a small `PasswordEncryptor` class that provides *Base64* crypting.
+I created a small `PasswordEncryptor` class that provides *AES256* crypting by default.
 `PasswordEncryptor` is very simple, you can instantiate like this:
 ```csharp
-const string default = "Def4ult";
-var encryptor = new PasswordEncryptor(default);
+const string defaultPassword = "Def4ult";
+const string secret = "secret";
+const string salt = "saltsalt"; //lenght must be at least 8
+var encryptor = new PasswordEncryptor(defaultPassword, secret, salt);
 //and now you know how to encrypt
-encryptor.EncryptPassword("123456789");
+var crypted = encryptor.EncryptPassword("123456789");
+//and now you know how to decrypt
+var original = encryptor.DecryptPassword(crypted);
 ```
 
 ##`IPasswordHasher`##
-`IPasswordHasher` is a simple interface with two methods:
+`IPasswordHasher` is a simple interface with one method:
 ```csharp
 string HashPassword(string password)
 ```
@@ -69,8 +73,8 @@ I created a small `PasswordHasher` class that provides *SHA512* hasing with a sa
 `PasswordEncryptor` is very simple, you can instantiate like this:
 ```csharp
 const string salt = "Salty";
-const string default = "Def4ult";
-var encryptor = new PasswordHasher(salt, default);
+const string defaultPassword = "Def4ult";
+var encryptor = new PasswordHasher(salt, defaultPassword);
 //and now you know how to encrypt
 encryptor.HashPassword("123456789");
 ```

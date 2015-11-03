@@ -1,18 +1,18 @@
 ﻿namespace Caelan.Frameworks.Common.NUnit.Common
-open System
+
 open Caelan.Frameworks.Common.Classes
 open Classes
 
 module Mappers = 
     type ABMapper() = 
         inherit DefaultMapper<TestA, TestB>()
-        override __.Map(source, dest) = 
-            base.Map(source, dest) |> ignore
+        override __.CustomMap(source, dest) = 
+            base.CustomMap(source, dest) |> ignore
             dest.B <- dest.B + " mapper"
             dest
-
-    type IntFloatMapper() =
+    
+    type IntFloatMapper() = 
         inherit DefaultMapper<int, float>()
-
-        override __.Map(source, destination) =
-            (float)source
+        override __.CustomMap(source, dest) = 
+            base.CustomMap(source, dest) |> ignore
+            (float) source

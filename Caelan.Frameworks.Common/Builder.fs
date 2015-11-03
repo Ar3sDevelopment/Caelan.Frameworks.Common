@@ -8,24 +8,28 @@ open System.Reflection
 
 module Builder = 
     let internal isMapper (mapperType : Type) (t : Type) = mapperType.IsAssignableFrom(t) && not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition
-    
+
     let internal getMapper<'TSource, 'TDestination> (assemblies : Assembly []) = 
-        typeof<IMapper<'TSource, 'TDestination>> |> MemoizeHelper.Memoize(fun mapperType -> 
-                                                        let cb = ContainerBuilder()
-                                                        let mainAssemblies = assemblies |> Array.filter (fun t -> t <> null)
-                                                        let refAssemblies = mainAssemblies |> Array.collect (fun i -> i.GetReferencedAssemblies() |> Array.map Assembly.Load)
+        let getMapperType mapperType = 
+            let cb = ContainerBuilder()
+            let mainAssemblies = assemblies |> Array.filter (isNull >> not)
+            let refAssemblies = mainAssemblies |> Array.collect (fun i -> i.GetReferencedAssemblies() |> Array.map Assembly.Load)
                                                         
-                                                        let allAssemblies = 
-                                                            mainAssemblies
-                                                            |> Array.append refAssemblies
-                                                            |> Array.filter (fun a -> a.GetTypes() |> Array.exists (fun i -> i |> isMapper mapperType))
-                                                        cb.RegisterGeneric(typedefof<DefaultMapper<'TSource, 'TDestination>>).As(typedefof<IMapper<'TSource, 'TDestination>>) |> ignore
-                                                        cb.RegisterAssemblyTypes(allAssemblies).Where(fun t -> t |> isMapper mapperType).AsImplementedInterfaces() |> ignore
-                                                        let container = cb.Build()
-                                                        using (container.BeginLifetimeScope()) (fun _ -> container.Resolve<IMapper<'TSource, 'TDestination>>()))
+            let allAssemblies = 
+                mainAssemblies
+                |> Array.append refAssemblies
+                |> Array.filter (fun a -> a.GetTypes() |> Array.exists (fun i -> i |> isMapper mapperType))
+            cb.RegisterGeneric(typedefof<DefaultMapper<'TSource, 'TDestination>>).As(typedefof<IMapper<'TSource, 'TDestination>>) |> ignore
+            cb.RegisterAssemblyTypes(allAssemblies).Where(fun t -> t |> isMapper mapperType).AsImplementedInterfaces() |> ignore
+            let container = cb.Build()
+            using (container.BeginLifetimeScope()) (fun _ -> container.Resolve<IMapper<'TSource, 'TDestination>>())
+        typeof<IMapper<'TSource, 'TDestination>> |> MemoizeHelper.Memoize getMapperType
     
     [<Sealed>]
     type Builder<'T> internal (source, assemblies : Assembly []) = 
+        /// <summary>
+        /// 
+        /// </summary>
         member this.To<'TDestination>() = 
             let destination = Activator.CreateInstance<'TDestination>()
             let mapper = 
@@ -34,10 +38,18 @@ module Builder =
                 |> getMapper
             (destination, mapper) |> this.To
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mapper"></param>
         member this.To<'TDestination>(mapper : IMapper<'T, 'TDestination>) =
             let destination = Activator.CreateInstance<'TDestination>()
             (destination, mapper) |> this.To
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="destination"></param>
         member this.To<'TDestination>(destination : 'TDestination) = 
             (destination, 
              assemblies
@@ -45,6 +57,11 @@ module Builder =
              |> getMapper)
             |> this.To
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="mapper"></param>
         member __.To<'TDestination>(destination, mapper : IMapper<'T, 'TDestination>) = 
             let sourceObj = source :> obj
             match sourceObj with
@@ -53,13 +70,23 @@ module Builder =
     
     [<Sealed>]
     type ListBuilder<'T> internal (sourceList, assemblies : Assembly []) = 
-        
+        /// <summary>
+        /// 
+        /// </summary>
         member this.ToList<'TDestination>() = 
             let allAssemblies = assemblies |> Array.append [| typeof<'TDestination>.Assembly |]
             getMapper<'T, 'TDestination> allAssemblies |> this.ToList
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mapper"></param>
         member __.ToList<'TDestination>(mapper : IMapper<'T, 'TDestination>) = sourceList |> Seq.map mapper.Map
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="source"></param>
     let Build<'T>(source : 'T) = 
         let assemblies = 
             [| Assembly.GetCallingAssembly()
@@ -69,6 +96,10 @@ module Builder =
                typeof<'T>.Assembly |]
         Builder<'T>(source, assemblies)
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sourceList"></param>
     let BuildList<'T>(sourceList : seq<'T>) = 
         let assemblies = 
             [| Assembly.GetCallingAssembly()

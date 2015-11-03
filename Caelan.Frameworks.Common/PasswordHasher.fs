@@ -6,12 +6,29 @@ open Caelan.Frameworks.Common.Interfaces
 open Caelan.Frameworks.Common.Helpers
 
 type PasswordHasher(salt : string, defaultPassword : string, encryptor : IPasswordHasher) = 
-    member val Salt = salt with get
-    member val DefaultPassword = defaultPassword with get
-    member this.DefaultPasswordHashed with get() = this.HashPassword(this.DefaultPassword)
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    member val Salt = salt
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    member val DefaultPassword = defaultPassword
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    member this.DefaultPasswordHashed = this.HashPassword(this.DefaultPassword)
+    
+    /// <summary>
+    /// This function hashes the given password
+    /// </summary>
+    /// <param name="password">The password to be hashed</param>
     member this.HashPassword(password) = 
-        (encryptor, password) 
-        |> MemoizeHelper.Memoize(fun (e, p) -> e.HashPassword(this.Salt + e.HashPassword(p)))
+        (encryptor, password) |> MemoizeHelper.Memoize(fun (e, p) -> e.HashPassword(this.Salt + e.HashPassword(p)))
+    
     new(salt, defaultPassword) = 
         let encryptor = 
             { new IPasswordHasher with

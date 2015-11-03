@@ -22,11 +22,11 @@ You can use `Builder` class for map a source to a destination or create a new ob
 var userDto = Builder.Build(user).To<UserDTO>(); //user is a User instance
 ```
 But if a `IMapper<User, UserDTO>` implementation is missing it will build an empty `UserDTO`.
-`DefaultMapper<TSource, TDestination>` is an abstract class that prepare a simple `IMapper<TSource, TDestination>` implementation, you have only to define a body for `Map(TSource source, TDestination destination)` method, like this:
+`DefaultMapper<TSource, TDestination>` is an abstract class that prepare a simple `IMapper<TSource, TDestination>` implementation, you have only to define a body for `CustomMap(TSource source, TDestination destination)` method, like this:
 ```csharp
 public class UserDTOMapper : DefaultMapper<User, UserDTO>
 {
-  public override UserDTO Map(User source, UserDTO destination)
+  public override void CustomMap(User source, UserDTO destination)
   {
     base.Map(source, destination)
     //body here like

@@ -48,9 +48,9 @@ type PasswordEncryptor(defaultPassword : string, secret : string, salt : string,
                       
                       let aesEncryption (aes : RijndaelManaged) (key : Rfc2898DeriveBytes) = 
                           aes.Key <- key.GetBytes(aes.KeySize / 8)
-                          using (new MemoryStream()) writeEncryptedData aes
+                          using (new MemoryStream()) (fun t -> writeEncryptedData t aes)
                       
-                      let startEncryption (key : Rfc2898DeriveBytes) = using (new RijndaelManaged()) aesEncryption key
+                      let startEncryption (key : Rfc2898DeriveBytes) = using (new RijndaelManaged()) (fun t -> aesEncryption t key)
                       using (new Rfc2898DeriveBytes(secret, saltBytes)) startEncryption
                   
                   member __.DecryptPassword(crypted, secret, salt) = 
@@ -71,7 +71,7 @@ type PasswordEncryptor(defaultPassword : string, secret : string, salt : string,
                               aes.IV <- iv
                               using (new CryptoStream(msDecrypt, aes.CreateDecryptor(aes.Key, aes.IV), CryptoStreamMode.Read)) readCrypto
                           
-                          let keyDecryption (key : Rfc2898DeriveBytes) = using (new RijndaelManaged()) aesDecryption key
+                          let keyDecryption (key : Rfc2898DeriveBytes) = using (new RijndaelManaged()) (fun t -> aesDecryption t key)
                           using (new Rfc2898DeriveBytes(secret, saltBytes)) keyDecryption
                       using (new MemoryStream(Convert.FromBase64String(crypted))) startDecryption }
         PasswordEncryptor(defaultPassword, secret, salt, encryptor)

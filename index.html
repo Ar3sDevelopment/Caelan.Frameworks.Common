@@ -1,38 +1,55 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Common Framework by Ar3sDevelopment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
+    <title>Common Framework by Ar3sDevelopment</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
+    <header>
+      <div class="inner">
         <h1>Common Framework</h1>
-        <p>Caelan.Frameworks.Common NuGet Package</p>
+        <h2>Caelan.Frameworks.Common NuGet Package</h2>
+        <a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
 
-        <p class="view"><a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common">View the Project on GitHub <small>Ar3sDevelopment/Caelan.Frameworks.Common</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
 <a id="common-framework" class="anchor" href="#common-framework" aria-hidden="true"><span class="octicon octicon-link"></span></a>Common Framework</h1>
 
-<p>The Caelan.Frameworks.Common NuGet Package
-If you need support or you want to contact me I'm <a href="https://twitter.com/CaelanIt">CaelanIt</a> on Twitter</p>
+<p>The Caelan.Frameworks.Common NuGet Package <a href="http://badge.fury.io/nu/Caelan.Frameworks.Common"><img src="https://badge.fury.io/nu/Caelan.Frameworks.Common.svg" alt="NuGet version"></a></p>
+
+<p>If you need support or you want to contact me I'm <a href="https://twitter.com/CaelanIt">CaelanIt</a> on Twitter</p>
+
+<h2>
+<a id="build" class="anchor" href="#build" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build</h2>
+
+<p>AppVeyor (Windows): <a href="https://ci.appveyor.com/project/matteobruni/caelan-frameworks-common"><img src="https://ci.appveyor.com/api/projects/status/0wi8iemmxy4xu986?svg=true" alt="Build status"></a></p>
+
+<p>Travis CI (Unix Mono): <a href="https://travis-ci.org/Ar3sDevelopment/Caelan.Frameworks.Common"><img src="https://travis-ci.org/Ar3sDevelopment/Caelan.Frameworks.Common.svg?branch=master" alt="Build Status"></a></p>
+
+<h2>
+<a id="requests" class="anchor" href="#requests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requests</h2>
+
+<p>Pull Requests: <a href="http://issuestats.com/github/Ar3sDevelopment/Caelan.Frameworks.Common"><img src="http://issuestats.com/github/Ar3sDevelopment/Caelan.Frameworks.Common/badge/pr" alt="Issue Stats"></a></p>
+
+<p>Issues: <a href="http://issuestats.com/github/Ar3sDevelopment/Caelan.Frameworks.Common"><img src="http://issuestats.com/github/Ar3sDevelopment/Caelan.Frameworks.Common/badge/issue" alt="Issue Stats"></a></p>
+
+<p>Waffle.io: <a href="https://waffle.io/Ar3sDevelopment/Caelan.Frameworks.Common"><img src="https://badge.waffle.io/Ar3sDevelopment/Caelan.Frameworks.Common.png?label=ready&amp;title=Ready" alt="Stories in Ready"></a></p>
 
 <h2>
 <a id="what-is-it" class="anchor" href="#what-is-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is it?</h2>
@@ -40,59 +57,93 @@ If you need support or you want to contact me I'm <a href="https://twitter.com/C
 <p>My Framework.Common package is an utility framework for delegating the object mapping to a specific class or simply for a password hasher class.</p>
 
 <h2>
-<a id="builder-and-imappertsource-tdestination" class="anchor" href="#builder-and-imappertsource-tdestination" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code>Builder</code> and <code>IMapper&lt;TSource, TDestination&gt;</code>
+<a id="builder-and-imappertsource-tdestination" class="anchor" href="#builder-and-imappertsource-tdestination" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>Builder</code> and <code>IMapper&lt;TSource, TDestination&gt;</code>
 </h2>
 
 <p>You can use <code>Builder</code> class for map a source to a destination or create a new object from the source like this:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="pl-k">var</span> userDto = Builder.Source&lt;User&gt;().Destination&lt;UserDTO&gt;().Build(user); <span class="pl-c">//user is a User instance</span></pre></div>
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">var</span> userDto = Builder.Build(user).To&lt;UserDTO&gt;(); <span class="pl-c">//user is a User instance</span></pre></div>
 
 <p>But if a <code>IMapper&lt;User, UserDTO&gt;</code> implementation is missing it will build an empty <code>UserDTO</code>.
-<code>DefaultMapper&lt;TSource, TDestination&gt;</code> is an abstract class that prepare a simple <code>IMapper&lt;TSource, TDestination&gt;</code> implementation, you have only to define a body for <code>Map(TSource source, ref TDestination destination)</code> method, like this:</p>
+<code>DefaultMapper&lt;TSource, TDestination&gt;</code> is an abstract class that prepare a simple <code>IMapper&lt;TSource, TDestination&gt;</code> implementation, you have only to define a body for <code>CustomMap(TSource source, TDestination destination)</code> method, like this:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">UserDTOMapper</span> : <span class="pl-st">DefaultMapper</span>&lt;<span class="pl-st">User</span>, <span class="pl-st">UserDTO</span>&gt;
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">UserDTOMapper</span> : <span class="pl-k">DefaultMapper</span>&lt;<span class="pl-k">User</span>, <span class="pl-k">UserDTO</span>&gt;
 {
-  <span class="pl-s">public</span> <span class="pl-s">override</span> <span class="pl-st">void</span> <span class="pl-en">Map</span>(<span class="pl-st">User</span> <span class="pl-vpf">source</span>, <span class="pl-st">ref</span> <span class="pl-st">UserDTO</span> <span class="pl-vpf">destination</span>)
+  <span class="pl-k">public</span> <span class="pl-k">override</span> <span class="pl-k">void</span> <span class="pl-en">CustomMap</span>(<span class="pl-k">User</span> <span class="pl-smi">source</span>, <span class="pl-k">UserDTO</span> <span class="pl-smi">destination</span>)
   {
+    <span class="pl-c1">base</span>.Map(source, destination)
     <span class="pl-c">//body here like</span>
     <span class="pl-c">//destination.Member = source.Member;</span>
-    <span class="pl-c">//nothing to return</span>
+    <span class="pl-k">return</span> destination;
   }
 }</pre></div>
 
 <p>And you're done. <code>Builder</code> class searches for it in assemblies and use it without you have to do nothing more than the <code>Builder</code> syntax showed before.
 If <code>Builder</code> class can't find it or you have multiple mapper for same types you can specify the mapper like this:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="pl-k">var</span> mapper = <span class="pl-s">new</span> UserDTOMapper();
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">var</span> mapper = <span class="pl-k">new</span> UserDTOMapper();
 <span class="pl-c">//if the mapper has some custom property you can initialize them here</span>
-<span class="pl-k">var</span> userDto = Builder.Source&lt;User&gt;().Destination&lt;UserDTO&gt;(mapper).Build(user); <span class="pl-c">//user is a User instance</span></pre></div>
+<span class="pl-k">var</span> userDto = Builder.Build(user).To&lt;UserDTO&gt;(mapper); <span class="pl-c">//user is a User instance</span></pre></div>
 
 <h2>
 <a id="ipasswordencryptor" class="anchor" href="#ipasswordencryptor" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>IPasswordEncryptor</code>
 </h2>
 
-<p><code>IPasswordEncryptor</code> is a simple interface with one method:</p>
+<p><code>IPasswordEncryptor</code> is a simple interface with two methods:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="pl-st">string</span> EncryptPassword(<span class="pl-st">string</span> password)</pre></div>
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">string</span> EncryptPassword(<span class="pl-k">string</span> password, <span class="pl-k">string</span> secret, <span class="pl-k">string</span> salt)
+<span class="pl-k">string</span> DecryptPassword(<span class="pl-k">string</span> crypted, <span class="pl-k">string</span> secret, <span class="pl-k">string</span> salt)</pre></div>
 
 <p>And you can inherit from this for a custom password encryptor and reference it by the interface.
-I created a small <code>PasswordHelper</code> class that provides <em>SHA512</em> hashing with a custom salt.
-<code>PasswordHelper</code> is very simple, you can instantiate like this:</p>
+I created a small <code>PasswordEncryptor</code> class that provides <em>AES256</em> crypting by default.
+<code>PasswordEncryptor</code> is very simple, you can instantiate like this:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="pl-s">const</span> <span class="pl-st">string</span> salt = <span class="pl-s1"><span class="pl-pds">"</span>Salty<span class="pl-pds">"</span></span>;
-<span class="pl-s">const</span> <span class="pl-st">string</span> <span class="pl-k">default</span> = <span class="pl-s1"><span class="pl-pds">"</span>Def4ult<span class="pl-pds">"</span></span>;
-<span class="pl-k">var</span> encryptor = <span class="pl-s">new</span> PasswordHelper(salt, <span class="pl-k">default</span>);
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">const</span> <span class="pl-k">string</span> defaultPassword = <span class="pl-s"><span class="pl-pds">"</span>Def4ult<span class="pl-pds">"</span></span>;
+<span class="pl-k">const</span> <span class="pl-k">string</span> secret = <span class="pl-s"><span class="pl-pds">"</span>secret<span class="pl-pds">"</span></span>;
+<span class="pl-k">const</span> <span class="pl-k">string</span> salt = <span class="pl-s"><span class="pl-pds">"</span>saltsalt<span class="pl-pds">"</span></span>; <span class="pl-c">//lenght must be at least 8</span>
+<span class="pl-k">var</span> encryptor = <span class="pl-k">new</span> PasswordEncryptor(defaultPassword, secret, salt);
 <span class="pl-c">//and now you know how to encrypt</span>
-encryptor.EncryptPassword(<span class="pl-s1"><span class="pl-pds">"</span>123456789<span class="pl-pds">"</span></span>);</pre></div>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/Ar3sDevelopment">Ar3sDevelopment</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+<span class="pl-k">var</span> crypted = encryptor.EncryptPassword(<span class="pl-s"><span class="pl-pds">"</span>123456789<span class="pl-pds">"</span></span>);
+<span class="pl-c">//and now you know how to decrypt</span>
+<span class="pl-k">var</span> original = encryptor.DecryptPassword(crypted);</pre></div>
+
+<h2>
+<a id="ipasswordhasher" class="anchor" href="#ipasswordhasher" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>IPasswordHasher</code>
+</h2>
+
+<p><code>IPasswordHasher</code> is a simple interface with one method:</p>
+
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">string</span> HashPassword(<span class="pl-k">string</span> password)</pre></div>
+
+<p>And you can inherit from this for a custom password encryptor and reference it by the interface.
+I created a small <code>PasswordHasher</code> class that provides <em>SHA512</em> hasing with a salt.
+<code>PasswordEncryptor</code> is very simple, you can instantiate like this:</p>
+
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">const</span> <span class="pl-k">string</span> salt = <span class="pl-s"><span class="pl-pds">"</span>Salty<span class="pl-pds">"</span></span>;
+<span class="pl-k">const</span> <span class="pl-k">string</span> defaultPassword = <span class="pl-s"><span class="pl-pds">"</span>Def4ult<span class="pl-pds">"</span></span>;
+<span class="pl-k">var</span> encryptor = <span class="pl-k">new</span> PasswordHasher(salt, defaultPassword);
+<span class="pl-c">//and now you know how to encrypt</span>
+encryptor.HashPassword(<span class="pl-s"><span class="pl-pds">"</span>123456789<span class="pl-pds">"</span></span>);</pre></div>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Ar3sDevelopment/Caelan.Frameworks.Common"></a> is maintained by <a href="https://github.com/Ar3sDevelopment">Ar3sDevelopment</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-              <script type="text/javascript">
+
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>

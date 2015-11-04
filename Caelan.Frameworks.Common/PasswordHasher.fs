@@ -33,8 +33,9 @@ type PasswordHasher(salt : string, defaultPassword : string, encryptor : IPasswo
         let encryptor = 
             { new IPasswordHasher with
                   member __.HashPassword(password) = 
-                      using (new SHA512CryptoServiceProvider()) (fun provider -> 
+                      let computeHash (provider: SHA512CryptoServiceProvider) =
                           provider.ComputeHash(Encoding.Default.GetBytes(password))
                           |> Array.map (fun t -> t.ToString("x2").ToLower())
-                          |> String.concat "") }
+                          |> String.concat ""
+                      using (new SHA512CryptoServiceProvider()) computeHash }
         PasswordHasher(salt, defaultPassword, encryptor)

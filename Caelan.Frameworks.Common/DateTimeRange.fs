@@ -6,23 +6,19 @@ type DateTimeRange(start : DateTime, ``end``) =
     /// 
     /// </summary>
     member val Start =
-        match start with
-        | _ when start > ``end`` -> ``end``
-        | _ -> start
+        (start,``end``) ||> min
         with get, set
     /// <summary>
     /// 
     /// </summary>
     member val End =
-        match start with
-        | _ when start > ``end`` -> ``start``
-        | _ -> ``end``
+        (start,``end``) ||> max
         with get, set
     /// <summary>
     /// 
     /// </summary>
     /// <param name="date"></param>
-    member public this.IsInRange(date) = this.Start >= date && this.End <= date
+    member public this.IsInRange date = this.Start >= date && this.End <= date
     /// <summary>
     /// 
     /// </summary>

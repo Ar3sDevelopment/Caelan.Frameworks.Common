@@ -19,7 +19,7 @@ type DefaultMapper<'TSource, 'TDestination>() =
                 | Some(a) -> (a.ToField, p.GetValue(source)) ||> iterGeneric
             match source :> obj |> Option.ofObj with
             | None -> Unchecked.defaultof<'TDestination>
-            | Some(s) ->
+            | _ ->
                 let sourceType = source.GetType()
                 let customProperties = sourceType.GetProperties() |> Array.filter (fun t -> t.CustomAttributes |> Seq.length > 0)
                 match sourceType with
@@ -33,7 +33,7 @@ type DefaultMapper<'TSource, 'TDestination>() =
                 customProperties
                 |> Array.map (fun t -> (t, Attribute.GetCustomAttribute(t,typeof<MapFieldAttribute>) :?> MapFieldAttribute))
                 |> Array.iter iterMapProperties
-                this.CustomMap(s :?> 'TSource, destination)
+                (source, destination) |> this.CustomMap
                 
 
     /// <summary>
@@ -42,5 +42,4 @@ type DefaultMapper<'TSource, 'TDestination>() =
     /// <param name="source"></param>
     /// <param name="destination"></param>
     abstract CustomMap : source:'TSource * destination:'TDestination -> 'TDestination
-    override __.CustomMap(source, destination) =
-        destination
+    override __.CustomMap(source, destination) = destination

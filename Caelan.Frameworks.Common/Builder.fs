@@ -41,29 +41,26 @@ module Builder =
         /// 
         /// </summary>
         /// <param name="mapper"></param>
-        member this.To<'TDestination>(mapper : IMapper<'T, 'TDestination>) =
-            let destination = Activator.CreateInstance<'TDestination>()
-            (destination, mapper) |> this.To
+        member this.To<'TDestination>(mapper : IMapper<'T, 'TDestination>) = (Activator.CreateInstance<'TDestination>(), mapper) |> this.To
         
         /// <summary>
         /// 
         /// </summary>
         /// <param name="destination"></param>
         member this.To<'TDestination>(destination : 'TDestination) = 
-            (destination, 
-             assemblies
-             |> Array.append [| typeof<'TDestination>.Assembly |]
-             |> getMapper)
-            |> this.To
+            let mapper =
+                assemblies
+                |> Array.append [| typeof<'TDestination>.Assembly |]
+                |> getMapper
+            (destination, mapper) |> this.To
         
         /// <summary>
         /// 
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="mapper"></param>
-        member __.To<'TDestination>(destination, mapper : IMapper<'T, 'TDestination>) = 
-            let sourceObj = source :> obj
-            match sourceObj with
+        member __.To<'TDestination>(destination, mapper : IMapper<'T, 'TDestination>) =  
+            match source :> obj with
             | null -> Unchecked.defaultof<'TDestination>
             | _ -> (source, destination) |> mapper.Map
     

@@ -7,8 +7,7 @@ open System.Web
 module AssemblyHelper =
     let GetWebEntryAssembly() =
         match HttpContext.Current with
-        | currentContext when currentContext |> isNull || currentContext.ApplicationInstance |> isNull -> null
-        | _ ->
+        | currentContext when currentContext |> (isNull >> not) && currentContext.ApplicationInstance |> (isNull >> not) -> 
             let rec getAssembly (asmType : Type) =
                 match asmType |> Option.ofObj with
                 | None -> null
@@ -16,3 +15,4 @@ module AssemblyHelper =
                 | Some(value) -> value.BaseType |> getAssembly
 
             HttpContext.Current.ApplicationInstance.GetType() |> getAssembly
+        | _ -> null

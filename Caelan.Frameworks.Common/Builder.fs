@@ -61,7 +61,7 @@ module Builder =
         /// <param name="mapper"></param>
         member __.To<'TDestination>(destination, mapper : IMapper<'T, 'TDestination>) =  
             match source :> obj with
-            | null -> destination
+            | null -> Unchecked.defaultof<'TDestination>
             | _ -> (source, destination) |> mapper.Map
     
     [<Sealed>]

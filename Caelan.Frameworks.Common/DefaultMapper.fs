@@ -18,7 +18,7 @@ type DefaultMapper<'TSource, 'TDestination>() =
                 | None -> ()
                 | Some(a) -> (a.ToField, p.GetValue(source)) ||> iterGeneric
             match source :> obj |> Option.ofObj with
-            | None -> destination
+            | None -> Unchecked.defaultof<'TDestination>
             | _ ->
                 let sourceType = source.GetType()
                 let customProperties = sourceType.GetProperties() |> Array.filter (fun t -> t.CustomAttributes |> Seq.length > 0)

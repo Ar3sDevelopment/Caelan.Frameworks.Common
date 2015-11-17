@@ -1,4 +1,6 @@
 #Common Framework
+
+[![Join the chat at https://gitter.im/Ar3sDevelopment/Caelan.Frameworks.Common](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Ar3sDevelopment/Caelan.Frameworks.Common?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 The Caelan.Frameworks.Common NuGet Package [![NuGet version](https://badge.fury.io/nu/Caelan.Frameworks.Common.svg)](http://badge.fury.io/nu/Caelan.Frameworks.Common)
 
 If you need support or you want to contact me I'm [CaelanIt](https://twitter.com/CaelanIt) on Twitter

@@ -7,21 +7,31 @@ open System
 open System.Reflection
 
 module Builder = 
+    let mutable private container =
+        let cb = ContainerBuilder()
+        //cb.RegisterGeneric(typedefof<DefaultMapper<_, _>>).As(typedefof<IMapper<_, _>>) |> ignore
+        cb.Build()
+
     let internal getMapper<'TSource, 'TDestination> (assemblies : Assembly []) = 
         let getMapperType (mapperType : Type) = 
-            let isMapper (t : Type) = mapperType.IsAssignableFrom(t) && not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition
-            let cb = ContainerBuilder()
-            let mainAssemblies = assemblies |> Array.filter (isNull >> not)
-            let refAssemblies = mainAssemblies |> Array.collect (fun i -> i.GetReferencedAssemblies() |> Array.map Assembly.Load)
-                                                        
-            let allAssemblies = 
-                mainAssemblies
-                |> Array.append refAssemblies
-                |> Array.filter (fun a -> a.GetTypes() |> Array.exists isMapper)
-            cb.RegisterGeneric(typedefof<DefaultMapper<'TSource, 'TDestination>>).As(typedefof<IMapper<'TSource, 'TDestination>>) |> ignore
-            cb.RegisterAssemblyTypes(allAssemblies).Where(fun t -> t |> isMapper).AsImplementedInterfaces() |> ignore
-            let container = cb.Build()
-            using (container.BeginLifetimeScope()) (fun _ -> container.Resolve<IMapper<'TSource, 'TDestination>>())
+            let mutable mapper = Unchecked.defaultof<IMapper<'TSource, 'TDestination>>
+            using (container.BeginLifetimeScope()) (fun _ ->
+                if container.TryResolve<IMapper<'TSource, 'TDestination>>(&mapper) |> not then
+                    let isMapper (t : Type) = mapperType.IsAssignableFrom(t) && not t.IsAbstract && not t.IsInterface && not t.IsGenericTypeDefinition
+                    let cb = ContainerBuilder()
+                    let mainAssemblies = assemblies |> Array.filter (isNull >> not)
+                    let refAssemblies = mainAssemblies |> Array.collect (fun i -> i.GetReferencedAssemblies() |> Array.map Assembly.Load)
+                                                                
+                    let allAssemblies = 
+                        mainAssemblies
+                        |> Array.append refAssemblies
+                        |> Array.filter (fun a -> a.GetTypes() |> Array.exists isMapper)
+                    cb.RegisterGeneric(typedefof<DefaultMapper<'TSource, 'TDestination>>).As(typedefof<IMapper<'TSource, 'TDestination>>) |> ignore
+                    cb.RegisterAssemblyTypes(allAssemblies).Where(fun t -> t |> isMapper).AsImplementedInterfaces() |> ignore
+                    cb.Update(container)
+                    mapper <- container.Resolve<IMapper<'TSource, 'TDestination>>()
+            )
+            mapper
         typeof<IMapper<'TSource, 'TDestination>> |> MemoizeHelper.Memoize getMapperType
     
     [<Sealed>]

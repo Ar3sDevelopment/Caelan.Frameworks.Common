@@ -1,6 +1,11 @@
 ﻿namespace Caelan.Frameworks.Common.Interfaces
 
+type IMapper =
+    interface
+    end
+
 type IMapper<'TSource, 'TDestination> = 
+    inherit IMapper
     /// <summary>
     /// 
     /// </summary>

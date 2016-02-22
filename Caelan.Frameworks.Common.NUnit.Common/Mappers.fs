@@ -1,6 +1,6 @@
 ﻿namespace Caelan.Frameworks.Common.NUnit.Common
 
-open Caelan.Frameworks.Common.Classes
+open Caelan.Frameworks.ClassBuilder.Classes
 open Classes
 
 module Mappers = 

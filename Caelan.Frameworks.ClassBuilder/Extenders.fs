@@ -1,4 +1,4 @@
-﻿namespace Caelan.Frameworks.Common
+﻿namespace Caelan.Frameworks.ClassBuilder
 open System
 
 module Extenders =

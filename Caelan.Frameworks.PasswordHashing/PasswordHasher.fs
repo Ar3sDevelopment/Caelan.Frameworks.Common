@@ -1,8 +1,8 @@
-﻿namespace Caelan.Frameworks.Common.Classes
+﻿namespace Caelan.Frameworks.PasswordHashing.Classes
 
 open System.Security.Cryptography
 open System.Text
-open Caelan.Frameworks.Common.Interfaces
+open Caelan.Frameworks.PasswordHashing.Interfaces
 open Caelan.Frameworks.Common.Helpers
 
 type PasswordHasher(salt : string, defaultPassword : string, encryptor : IPasswordHasher) = 

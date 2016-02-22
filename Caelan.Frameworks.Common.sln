@@ -1,13 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Caelan.Frameworks.Common", "Caelan.Frameworks.Common\Caelan.Frameworks.Common.fsproj", "{13389501-A209-4BEC-B442-1B0B8B2F1A21}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Caelan.Frameworks.Common", "Caelan.Frameworks.Common\Caelan.Frameworks.Common.fsproj", "{13389501-A209-4BEC-B442-1B0B8B2F1A21}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Caelan.Frameworks.Common.NUnit", "Caelan.Frameworks.Common.NUnit\Caelan.Frameworks.Common.NUnit.fsproj", "{E2782E87-0D07-4712-8F81-34DD157455E2}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Caelan.Frameworks.Common.NUnit", "Caelan.Frameworks.Common.NUnit\Caelan.Frameworks.Common.NUnit.fsproj", "{E2782E87-0D07-4712-8F81-34DD157455E2}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Caelan.Frameworks.Common.NUnit.Common", "Caelan.Frameworks.Common.NUnit.Common\Caelan.Frameworks.Common.NUnit.Common.fsproj", "{3BD968AB-2879-4335-9FEB-D46741C88FA3}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Caelan.Frameworks.Common.NUnit.Common", "Caelan.Frameworks.Common.NUnit.Common\Caelan.Frameworks.Common.NUnit.Common.fsproj", "{3BD968AB-2879-4335-9FEB-D46741C88FA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{158F7BB7-CCC7-4F98-8844-808FE80FA162}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Caelan.Frameworks.PasswordEncryption", "Caelan.Frameworks.PasswordEncryption\Caelan.Frameworks.PasswordEncryption.fsproj", "{7D7CA012-7CB1-4DF0-9558-FCBB8E665DC3}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Caelan.Frameworks.PasswordHashing", "Caelan.Frameworks.PasswordHashing\Caelan.Frameworks.PasswordHashing.fsproj", "{83A9AACC-6A2D-4774-8CD5-F3BEF3072C3E}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Caelan.Frameworks.ClassBuilder", "Caelan.Frameworks.ClassBuilder\Caelan.Frameworks.ClassBuilder.fsproj", "{9BCF6E84-4B65-45B8-9787-9A90B76D2257}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +30,26 @@ Global
 		{13389501-A209-4BEC-B442-1B0B8B2F1A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13389501-A209-4BEC-B442-1B0B8B2F1A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13389501-A209-4BEC-B442-1B0B8B2F1A21}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3BD968AB-2879-4335-9FEB-D46741C88FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3BD968AB-2879-4335-9FEB-D46741C88FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3BD968AB-2879-4335-9FEB-D46741C88FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3BD968AB-2879-4335-9FEB-D46741C88FA3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E2782E87-0D07-4712-8F81-34DD157455E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E2782E87-0D07-4712-8F81-34DD157455E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2782E87-0D07-4712-8F81-34DD157455E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2782E87-0D07-4712-8F81-34DD157455E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BD968AB-2879-4335-9FEB-D46741C88FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BD968AB-2879-4335-9FEB-D46741C88FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BD968AB-2879-4335-9FEB-D46741C88FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BD968AB-2879-4335-9FEB-D46741C88FA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D7CA012-7CB1-4DF0-9558-FCBB8E665DC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D7CA012-7CB1-4DF0-9558-FCBB8E665DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D7CA012-7CB1-4DF0-9558-FCBB8E665DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D7CA012-7CB1-4DF0-9558-FCBB8E665DC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83A9AACC-6A2D-4774-8CD5-F3BEF3072C3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83A9AACC-6A2D-4774-8CD5-F3BEF3072C3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83A9AACC-6A2D-4774-8CD5-F3BEF3072C3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83A9AACC-6A2D-4774-8CD5-F3BEF3072C3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BCF6E84-4B65-45B8-9787-9A90B76D2257}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BCF6E84-4B65-45B8-9787-9A90B76D2257}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BCF6E84-4B65-45B8-9787-9A90B76D2257}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BCF6E84-4B65-45B8-9787-9A90B76D2257}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

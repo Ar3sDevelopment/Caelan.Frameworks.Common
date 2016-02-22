@@ -1,7 +1,7 @@
-﻿namespace Caelan.Frameworks.Common.Classes
+﻿namespace Caelan.Frameworks.PasswordEncryption.Classes
 
 open Caelan.Frameworks.Common.Helpers
-open Caelan.Frameworks.Common.Interfaces
+open Caelan.Frameworks.PasswordEncryption.Interfaces
 open System
 open System.Text
 open System.IO

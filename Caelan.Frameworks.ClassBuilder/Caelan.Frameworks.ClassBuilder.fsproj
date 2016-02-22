@@ -53,8 +53,6 @@
     <Compile Include="AssemblyInfo.fs" />
     <None Include="Script.fsx" />
     <Compile Include="IMapper.fs" />
-    <Compile Include="AssemblyHelper.fs" />
-    <Compile Include="Extenders.fs" />
     <Compile Include="MapEqualsAttribute.fs" />
     <Compile Include="MapFieldAttribute.fs" />
     <Compile Include="DefaultMapper.fs" />

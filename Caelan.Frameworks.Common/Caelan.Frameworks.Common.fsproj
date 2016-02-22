@@ -54,6 +54,8 @@
     <Compile Include="MemoizeHelper.fs" />
     <Compile Include="DateTimeRange.fs" />
     <None Include="Caelan.Frameworks.Common.nuspec" />
+    <Compile Include="AssemblyHelper.fs" />
+    <Compile Include="Extenders.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

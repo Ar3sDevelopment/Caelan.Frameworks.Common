@@ -1,4 +1,4 @@
-﻿namespace Caelan.Frameworks.ClassBuilder.Helpers
+﻿namespace Caelan.Frameworks.Common.Helpers
 
 open System
 open System.Reflection

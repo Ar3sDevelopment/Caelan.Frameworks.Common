@@ -2,7 +2,7 @@
 
 open Autofac
 open Caelan.Frameworks.ClassBuilder
-open Caelan.Frameworks.ClassBuilder.Helpers
+open Caelan.Frameworks.Common.Helpers
 open Caelan.Frameworks.ClassBuilder.Interfaces
 open System
 open System.Reflection

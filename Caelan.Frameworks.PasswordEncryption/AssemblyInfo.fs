@@ -10,7 +10,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyTitle("Caelan.Frameworks.PasswordEncryption")>]
 [<assembly: AssemblyDescription("Caelan framework for password encryption")>]
 [<assembly: AssemblyConfiguration("")>]
-[<assembly: AssemblyCompany("")>]
+[<assembly: AssemblyCompany("Caelan")>]
 [<assembly: AssemblyProduct("Caelan.Frameworks.PasswordEncryption")>]
 [<assembly: AssemblyCopyright("Copyright ©  2016")>]
 [<assembly: AssemblyTrademark("")>]

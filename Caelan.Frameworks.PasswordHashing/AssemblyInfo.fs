@@ -10,7 +10,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyTitle("Caelan.Frameworks.PasswordHashing")>]
 [<assembly: AssemblyDescription("Caelan framework for password hashing")>]
 [<assembly: AssemblyConfiguration("")>]
-[<assembly: AssemblyCompany("")>]
+[<assembly: AssemblyCompany("Caelan")>]
 [<assembly: AssemblyProduct("Caelan.Frameworks.PasswordHashing")>]
 [<assembly: AssemblyCopyright("Copyright ©  2016")>]
 [<assembly: AssemblyTrademark("")>]

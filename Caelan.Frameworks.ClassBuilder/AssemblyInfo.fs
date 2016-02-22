@@ -10,7 +10,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyTitle("Caelan.Frameworks.ClassBuilder")>]
 [<assembly: AssemblyDescription("Caelan Framework for class building")>]
 [<assembly: AssemblyConfiguration("")>]
-[<assembly: AssemblyCompany("")>]
+[<assembly: AssemblyCompany("Caelan")>]
 [<assembly: AssemblyProduct("Caelan.Frameworks.ClassBuilder")>]
 [<assembly: AssemblyCopyright("Copyright ©  2016")>]
 [<assembly: AssemblyTrademark("")>]

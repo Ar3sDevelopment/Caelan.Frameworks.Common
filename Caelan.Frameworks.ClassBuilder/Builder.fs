@@ -1,8 +1,9 @@
-﻿namespace Caelan.Frameworks.Common.Classes
+﻿namespace Caelan.Frameworks.ClassBuilder.Classes
 
 open Autofac
-open Caelan.Frameworks.Common.Helpers
-open Caelan.Frameworks.Common.Interfaces
+open Caelan.Frameworks.ClassBuilder
+open Caelan.Frameworks.ClassBuilder.Helpers
+open Caelan.Frameworks.ClassBuilder.Interfaces
 open System
 open System.Reflection
 
@@ -16,8 +17,7 @@ module Builder =
         use scope = container.BeginLifetimeScope()
         if container.TryResolve<IMapper<'TSource, 'TDestination>>(&mapper) |> not then 
             let mainAssemblies = assemblies |> Array.filter (isNull >> not)
-            let refAssemblies = 
-                mainAssemblies |> Array.collect (fun i -> i.GetReferencedAssemblies() |> Array.map Assembly.Load)
+            let refAssemblies = mainAssemblies |> Array.collect (fun i -> i.GetReferencedAssemblies() |> Array.map Assembly.Load)
             
             let allAssemblies = 
                 mainAssemblies

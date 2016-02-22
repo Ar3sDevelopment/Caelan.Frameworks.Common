@@ -1,8 +1,8 @@
-﻿namespace Caelan.Frameworks.Common.Classes
+﻿namespace Caelan.Frameworks.ClassBuilder.Classes
 open System
 open System.Reflection
-open Caelan.Frameworks.Common.Attributes
-open Caelan.Frameworks.Common.Interfaces
+open Caelan.Frameworks.ClassBuilder.Attributes
+open Caelan.Frameworks.ClassBuilder.Interfaces
 
 type DefaultMapper<'TSource, 'TDestination>() = 
     interface IMapper<'TSource, 'TDestination> with

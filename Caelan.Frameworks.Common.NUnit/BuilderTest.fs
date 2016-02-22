@@ -1,7 +1,7 @@
 ﻿namespace Caelan.Frameworks.Common.NUnit
 
-open Caelan.Frameworks.Common.Attributes
-open Caelan.Frameworks.Common.Classes
+open Caelan.Frameworks.ClassBuilder.Attributes
+open Caelan.Frameworks.ClassBuilder.Classes
 open Caelan.Frameworks.Common.NUnit.Common.Classes
 open NUnit.Framework
 open System

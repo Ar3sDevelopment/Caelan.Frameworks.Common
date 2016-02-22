@@ -2,6 +2,8 @@
 open System
 open NUnit.Framework
 open Caelan.Frameworks.Common.Classes
+open Caelan.Frameworks.PasswordEncryption.Classes
+open Caelan.Frameworks.PasswordHashing.Classes
 
 type CustomPasswordHasher() =
     inherit PasswordHasher("salt", "default")

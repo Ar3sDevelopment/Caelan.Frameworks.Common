@@ -1,4 +1,4 @@
-﻿namespace Caelan.Frameworks.Common.Interfaces
+﻿namespace Caelan.Frameworks.PasswordEncryption.Interfaces
 
 open System
 

@@ -36,15 +36,9 @@
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
   <ItemGroup>
     <Compile Include="PasswordTest.fs" />
-    <Compile Include="BuilderTest.fs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Caelan.Frameworks.ClassBuilder\Caelan.Frameworks.ClassBuilder.fsproj">
-      <Name>Caelan.Frameworks.ClassBuilder</Name>
-      <Project>{9bcf6e84-4b65-45b8-9787-9a90b76d2257}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Caelan.Frameworks.PasswordEncryption\Caelan.Frameworks.PasswordEncryption.fsproj">
       <Name>Caelan.Frameworks.PasswordEncryption</Name>
       <Project>{7d7ca012-7cb1-4df0-9558-fcbb8e665dc3}</Project>
@@ -61,10 +55,6 @@
     <ProjectReference Include="..\Caelan.Frameworks.Common\Caelan.Frameworks.Common.fsproj">
       <Project>{13389501-A209-4BEC-B442-1B0B8B2F1A21}</Project>
       <Name>Caelan.Frameworks.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Caelan.Frameworks.Common.NUnit.Common\Caelan.Frameworks.Common.NUnit.Common.fsproj">
-      <Project>{3BD968AB-2879-4335-9FEB-D46741C88FA3}</Project>
-      <Name>Caelan.Frameworks.Common.NUnit.Common</Name>
     </ProjectReference>
     <Reference Include="FSharp.Core">
       <HintPath>..\packages\FSharp.Core.4.0.0.1\lib\net40\FSharp.Core.dll</HintPath>

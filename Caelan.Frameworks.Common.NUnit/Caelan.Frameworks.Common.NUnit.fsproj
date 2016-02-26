@@ -35,15 +35,9 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
   <ItemGroup>
-    <Compile Include="PasswordTest.fs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Caelan.Frameworks.PasswordHashing\Caelan.Frameworks.PasswordHashing.fsproj">
-      <Name>Caelan.Frameworks.PasswordHashing</Name>
-      <Project>{83a9aacc-6a2d-4774-8cd5-f3bef3072c3e}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,5 +51,8 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DateTimeRangeTest.fs" />
   </ItemGroup>
 </Project>

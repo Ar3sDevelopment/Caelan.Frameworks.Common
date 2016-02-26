@@ -35,7 +35,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
   <ItemGroup>
-    <Compile Include="PasswordTest.fs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -52,5 +51,8 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DateTimeRangeTest.fs" />
   </ItemGroup>
 </Project>

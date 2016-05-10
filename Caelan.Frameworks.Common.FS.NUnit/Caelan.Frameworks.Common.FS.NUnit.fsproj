@@ -8,6 +8,7 @@
     <RootNamespace>Caelan.Frameworks.Common.NUnit</RootNamespace>
     <AssemblyName>Caelan.Frameworks.Common.NUnit</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <Name>Caelan.Frameworks.Common.FS.NUnit</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,15 +37,12 @@
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets" />
   <ItemGroup>
     <None Include="packages.config" />
+    <Compile Include="DateTimeRangeTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <ProjectReference Include="..\Caelan.Frameworks.Common\Caelan.Frameworks.Common.fsproj">
-      <Project>{13389501-A209-4BEC-B442-1B0B8B2F1A21}</Project>
-      <Name>Caelan.Frameworks.Common</Name>
-    </ProjectReference>
     <Reference Include="FSharp.Core">
       <HintPath>..\packages\FSharp.Core.4.0.0.1\lib\net40\FSharp.Core.dll</HintPath>
     </Reference>
@@ -53,6 +51,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DateTimeRangeTest.fs" />
+    <ProjectReference Include="..\Caelan.Frameworks.Common\Caelan.Frameworks.Common.csproj">
+      <Name>Caelan.Frameworks.Common</Name>
+      <Project>{a2c46054-f5ac-4b26-bd5e-4589f2668d32}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
 </Project>

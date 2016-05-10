@@ -10,7 +10,7 @@
     <AssemblyName>Caelan.Frameworks.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
-    <Name>Caelan.Frameworks.Common</Name>
+    <Name>Caelan.Frameworks.Common.FS</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,7 +51,6 @@
     <Compile Include="AssemblyInfo.fs" />
     <None Include="Script.fsx" />
     <None Include="packages.config" />
-    <Compile Include="MemoizeHelper.fs" />
     <Compile Include="DateTimeRange.fs" />
     <None Include="Caelan.Frameworks.Common.nuspec" />
     <Compile Include="AssemblyHelper.fs" />

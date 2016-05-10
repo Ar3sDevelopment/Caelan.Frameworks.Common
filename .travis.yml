@@ -5,4 +5,4 @@ install:
   - sudo apt-get install nunit-console
 script:
   - xbuild /p:Configuration=Release Caelan.Frameworks.Common.sln
-  - nunit-console ./Caelan.Frameworks.Common.FS.NUnit/bin/Release/Caelan.Frameworks.Common.NUnit.dll
+  - nunit-console ./Caelan.Frameworks.Common.NUnit/bin/Release/Caelan.Frameworks.Common.NUnit.dll

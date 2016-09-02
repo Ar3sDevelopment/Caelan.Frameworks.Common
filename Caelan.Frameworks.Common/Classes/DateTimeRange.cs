@@ -1,11 +1,16 @@
-﻿using System;
+using System;
 using System.Linq;
+using System.ServiceModel;
 
 namespace Caelan.Frameworks.Common.Classes
 {
+    [DataContract]
     public class DateTimeRange
     {
+        [DataMember]
         public DateTime Start { get; set; }
+        
+        [DataMember]
         public DateTime End { get; set; }
 
         public DateTimeRange(DateTime start, DateTime end)
